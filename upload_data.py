@@ -12,8 +12,8 @@ import re
 # import json
 
 
-SERVER_URL = 'http://localhost:5000' # same this for this one it's API_SERVER URL
-# SERVER_URL = 'http://tandem7.pythonanywhere.com'
+# SERVER_URL = 'http://localhost:5000' # same this for this one it's API_SERVER URL
+SERVER_URL = 'http://tandem7.pythonanywhere.com'
 endpoint = '/add'
 
 # It is the function to read your csv data returnd by scraping script that you have.

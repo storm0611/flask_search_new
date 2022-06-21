@@ -145,8 +145,8 @@ def fetch_article():
 def get_study_design():
     if (request.method == 'POST'):
         connection =MySql.connect()
-        Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select DISTINCT study_design FROM articles")
+        Pointer = connection.cursor()
+        Pointer.execute("SELECT study_design FROM study_design")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -160,8 +160,8 @@ def get_study_design():
 def get_drug_categories():
     if (request.method == 'POST'):
         connection =MySql.connect()
-        Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select DISTINCT category_name FROM articles where domain_id = 'Drug'")
+        Pointer = connection.cursor()
+        Pointer.execute("SELECT category_name FROM articles")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -174,8 +174,8 @@ def get_drug_categories():
 def get_condition_categories():
     if (request.method == 'POST'):
         connection =MySql.connect()
-        Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select DISTINCT category_name FROM articles where domain_id = 'Condition'")
+        Pointer = connection.cursor()
+        Pointer.execute("SELECT category_name FROM articles")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -191,8 +191,8 @@ def get_data_type():
     if (request.method == 'POST'):
 
         connection =MySql.connect()
-        Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select DISTINCT data_type FROM articles")
+        Pointer = connection.cursor()
+        Pointer.execute("SELECT data_type FROM data_type")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -339,7 +339,8 @@ def fetch_drugs():
 
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select * from articles where (pm_id = '"+str(pm_id)+"')  and (domain_id = 'Drug');")
+        Pointer.execute("select * from articles where (pm_id = '" +
+                        str(pm_id)+"')  and (concept_id = " + str(concept_id) + ");")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -358,7 +359,8 @@ def fetch_condition():
 
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select * from articles where (pm_id = '"+str(pm_id)+"')  and (domain_id = 'Condition');")
+        Pointer.execute("select * from articles where (pm_id = '" +
+                        str(pm_id)+"')  and (concept_id = " + str(concept_id) + ");")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -377,7 +379,7 @@ def fetch_procedures():
 
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select * from articles where (pm_id = '"+str(pm_id)+"')  and (domain_id = 'Procedure');")
+        Pointer.execute("SELECT * from articles where (pm_id = "+str(pm_id)+") and (concept_id = " + str(concept_id) + ");")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -421,8 +423,8 @@ def barchart_plot_drugs():
 
 @app.route('/',methods=['POST','GET']) # '/' (only with slash), accepts POST and GET methods; Output - in the browser
 def display():
-    return render_template('index.html')
-    # return "P is for Panther"
+    # return render_template('index.html')
+    return "P is for Panther"
 
 @app.route('/about',methods=['POST','GET']) 
 def display_about():
