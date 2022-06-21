@@ -1,11 +1,12 @@
 from email.errors import InvalidMultipartContentTransferEncodingDefect
 import json
-from msilib.schema import Error
+
 from urllib.robotparser import RequestRate
 from flask_restful import reqparse, Api, Resource , request
 from flaskext.mysql import MySQL
 from flask_cors import CORS, cross_origin
 from flask import Flask, jsonify, render_template, request, send_file, make_response, abort, session
+from numpy import int64
 # from plots_code import barchart_diseases
 import pymysql
 from pymysql import Error
@@ -14,38 +15,113 @@ import logging
 app = Flask(__name__)
 MySql = MySQL()
 cors = CORS(app)
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = ''
-app.config['MYSQL_DATABASE_DB'] = 'mydb'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_USER'] = 'Tandem7'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'shani@@@@143'
+app.config['MYSQL_DATABASE_DB'] = 'Tandem7$articles_db'
+app.config['MYSQL_DATABASE_HOST'] = 'Tandem7.mysql.pythonanywhere-services.com'
 MySql.init_app(app)
+
+
+def insert_data(_table, _what, _where, _wval, _where1='', _wval1='', _where2='', _wval2='', _where3='', _wval3='', _where4='', _wval4=''):
+    connection = MySql.connect()
+    Pointer = connection.cursor()
+    select_query = "SELECT " + _what + " FROM " + \
+        _table + " WHERE " + _where + "=" + _wval + ";"
+    print(select_query)    
+    Pointer.execute(select_query)
+    result = Pointer.fetchall()
+    if len(result):
+        id = result[0][0]
+    else:
+        insert_query = "INSERT INTO " + _table + \
+            " (" + _where + _where1 + _where2 + _where3 + _where4 + \
+            ") VALUES (" + _wval + _wval1 + _wval2 + _wval3 + _wval4 + ");"
+        print(insert_query)
+        Pointer.execute(insert_query)
+        connection.commit()
+        select_query = "SELECT " + _what + " FROM " + _table + ";"
+        print(select_query)
+        Pointer.execute(select_query)
+        result = Pointer.fetchall()
+        id = len(result)
+    return id
+
+
+def insert_data_connect(_table, _val1, _val2):
+    connection = MySql.connect()
+    Pointer = connection.cursor()
+    insert_query = insert_query = "INSERT INTO " + \
+        _table + " VALUES (" + _val1 + ', ' + _val2 + ");"
+    print(insert_query)
+    Pointer.execute(insert_query)
+    connection.commit()
 
 # Sevrer script with two API endpoints (Upload and Fetch) that only accept http or https POST requests
 @app.route('/add', methods=['POST']) #/add end point that can only be call via POST request
 def add_article():
+    connection = MySql.connect()
+    Pointer = connection.cursor()
     #get data from the Client side through API and put data to the database
     json = request.json
     #print(json)
-    pmid = json['pmid']
+    pm_id = int64(json['pmid'])
     pm_link = json['pm_link']
     date_pub = json['date_pub']
     journal = json['journal']
     abstract = json['abstract']
     title = json['title']
     mesh = json['mesh']
-    concept_id_1 = json['concept_id_1']
-    concept_name = json['concept_name']
+    concept_id = int64(json['concept_id'])
     study_design = json['study_design']
     data_type = json['data_type']
-    domain_id = json['domain_id']
+    domain_id = json['domain']
     category_name = json['category_name']
+    
+    if pm_id and pm_link and date_pub and journal and abstract and title and mesh and concept_id and study_design and data_type and domain_id and category_name and request.method == 'POST':
+        journal_id = insert_data(
+            'journals', 'id', 'journal', "'" + str(journal) + "'")
+        print(journal_id)
 
-    if pmid and pm_link and date_pub and journal and abstract and title and mesh and concept_id_1 and concept_name and study_design and data_type and domain_id and category_name and request.method == 'POST':
-        SQL_Query = "INSERT INTO tb_articles(pmid, pm_link, date_pub,journal,abstract,title,mesh,concept_id_1,concept_name,study_design,data_type,domain_id,category_name) VALUES(%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        data = (pmid, pm_link, date_pub, journal, abstract, title, mesh, concept_id_1, concept_name, study_design, data_type,domain_id,category_name)
-        connection =MySql.connect()
-        Pointer = connection.cursor()
-        Pointer.execute(SQL_Query, data)
+        insert_query = "INSERT INTO articles (pm_id, pm_link, date_pub, abstract, title, journal_id, category_name) VALUES (" + \
+            str(pm_id) + ", '" + str(pm_link) + "', '" + date_pub + "', '" + \
+            abstract + "', '" + title + "', " + str(journal_id) + ", '" + category_name + "');"
+        print(insert_query)
+        Pointer.execute(insert_query)
+        connection.commit()
+        select_query = "SELECT id FROM articles;"
+        Pointer.execute(select_query)
+        result = Pointer.fetchall()
+        article_id = len(result)
+        print(article_id)
+
+        study_design_id = insert_data(
+            'study_design', 'id', 'study_design', "'" + study_design + "'")
+        print(study_design_id)
+
+        insert_data_connect('study_design_connect', str(
+            article_id), str(study_design_id))
+
+        data_type_id = insert_data(
+            'data_type', 'id', 'data_type', "'" + data_type + "'")
+        print(data_type_id)
+
+        insert_data_connect('data_type_connect', str(
+            article_id), str(data_type_id))
+
+        mesh_id = insert_data('mesh', 'id', 'mesh', "'" + mesh + "'", ', concept_id',
+                              ", " + str(concept_id), ', domain', ", '" + domain_id + "'",)
+        insert_data_connect(
+            'meshes_connect', str(article_id), str(mesh_id))
+        
+        
+        
+        
+        
+        # SQL_Query = "INSERT INTO tb_articles(pmid, pm_link, date_pub,journal,abstract,title,mesh,concept_id_1,concept_name,study_design,data_type,domain_id,category_name) VALUES(%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        # data = (pmid, pm_link, date_pub, journal, abstract, title, mesh, concept_id_1, concept_name, study_design, data_type,domain_id,category_name)
+        # connection =MySql.connect()
+        # Pointer = connection.cursor()
+        # Pointer.execute(SQL_Query, data)
         connection.commit()
         response = jsonify('Article Added!')
         response.status_code = 200 #if data addedd successfully: response 200
