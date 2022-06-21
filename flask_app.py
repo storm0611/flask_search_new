@@ -9,20 +9,21 @@ from numpy import int64, true_divide
 # from plots_code import barchart_diseases
 import pymysql
 from pymysql import Error
+import pandas as pd
 import logging
 
 app = Flask(__name__)
 MySql = MySQL()
 cors = CORS(app)
-app.config['MYSQL_DATABASE_USER'] = 'Tandem7'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'shani@@@@143'
-app.config['MYSQL_DATABASE_DB'] = 'Tandem7$articles_db'
-app.config['MYSQL_DATABASE_HOST'] = 'Tandem7.mysql.pythonanywhere-services.com'
-# app.config['MYSQL_DATABASE_USER'] = 'root'
-# app.config['MYSQL_DATABASE_PASSWORD'] = ''
-# app.config['MYSQL_DATABASE_DB'] = 'mydb'
-# app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-# app.config['MYSQL_DATABASE_PORT'] = 3306
+# app.config['MYSQL_DATABASE_USER'] = 'Tandem7'
+# app.config['MYSQL_DATABASE_PASSWORD'] = 'shani@@@@143'
+# app.config['MYSQL_DATABASE_DB'] = 'Tandem7$articles_db'
+# app.config['MYSQL_DATABASE_HOST'] = 'Tandem7.mysql.pythonanywhere-services.com'
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = ''
+app.config['MYSQL_DATABASE_DB'] = 'mydb'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_PORT'] = 3306
 MySql.init_app(app)
 connection = MySql.connect()
 Pointer = connection.cursor()
@@ -130,7 +131,7 @@ def fetch_article():
     if (start and end and request.method == 'POST'):
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select * from tb_articles limit "+str(start)+" , "+str(end)+";")
+        Pointer.execute("select * from articles limit "+str(start)+" , "+str(end)+";")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -145,7 +146,7 @@ def get_study_design():
     if (request.method == 'POST'):
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select DISTINCT study_design FROM tb_articles")
+        Pointer.execute("select DISTINCT study_design FROM articles")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -160,7 +161,7 @@ def get_drug_categories():
     if (request.method == 'POST'):
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select DISTINCT category_name FROM tb_articles where domain_id = 'Drug'")
+        Pointer.execute("select DISTINCT category_name FROM articles where domain_id = 'Drug'")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -174,7 +175,7 @@ def get_condition_categories():
     if (request.method == 'POST'):
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select DISTINCT category_name FROM tb_articles where domain_id = 'Condition'")
+        Pointer.execute("select DISTINCT category_name FROM articles where domain_id = 'Condition'")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -191,7 +192,7 @@ def get_data_type():
 
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select DISTINCT data_type FROM tb_articles")
+        Pointer.execute("select DISTINCT data_type FROM articles")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -218,11 +219,11 @@ def fetch_by_tags_article():
             mesh_1 = tags[0]
             one_query = ''
             if (str(mesh_1).isnumeric()):
-                one_query = 'concept_id_1 = "'+mesh_1+'"'
+                one_query = 'concept_id = "'+mesh_1+'"'
             else:
                 one_query = 'mesh = "'+mesh_1+'"'
             print("mesh: "+str(mesh_1))
-            Pointer.execute("select * from tb_articles where "+one_query+" limit "+str(start)+" , "+str(end)+";")
+            Pointer.execute("select * from articles where "+one_query+" limit "+str(start)+" , "+str(end)+";")
             records = Pointer.fetchall()
             print(records)
             response = jsonify(records)
@@ -232,17 +233,17 @@ def fetch_by_tags_article():
             mesh_1 = tags[0]
             one_query = ''
             if (str(mesh_1).isnumeric()):
-                one_query = 'concept_id_1 = "'+mesh_1+'"'
+                one_query = 'concept_id = "'+mesh_1+'"'
             else:
                 one_query = 'mesh = "'+mesh_1+'"'
             print("mesh: "+str(mesh_1))
-            Pointer.execute("select DISTINCT pmid from tb_articles where "+one_query+" limit "+str(start)+" , "+str(end)+";")
+            Pointer.execute("select DISTINCT pm_id from articles where "+one_query+" limit "+str(start)+" , "+str(end)+";")
             records = Pointer.fetchall()
             #print(records)
 
             meshes = []
             concept_ids = []
-            pmids = []
+            pm_ids = []
             i = 0
             for tag in tags:
                 if (i > 0):
@@ -253,20 +254,20 @@ def fetch_by_tags_article():
                 i += 1
             results = []
 
-            for pmid in records:
+            for pm_id in records:
                 found_res = 0
-                pmid = pmid['pmid'] #[a,'b,c]
+                pm_id = pm_id['pm_id'] #[a,'b,c]
 
                     #print(mesh)
                 if (len(meshes) > 0 and len(concept_ids) > 0):
                     for mesh in meshes:
-                        q = "select * from tb_articles where pmid = '"+pmid + "' and mesh like '%"+str(mesh) + "%' limit "+str(start)+" , "+str(end)+";"
+                        q = "select * from articles where pm_id = '"+pm_id + "' and mesh like '%"+str(mesh) + "%' limit "+str(start)+" , "+str(end)+";"
                         Pointer.execute(q)
                         records = Pointer.fetchall()
                         if (len(records) > 0):
                             found_res += 1
                             for concept_id in concept_ids:
-                                q = "select * from tb_articles where pmid = '"+pmid + "' and concept_id_1 like '%"+concept_id + "%' limit "+str(start)+" , "+str(end)+";"
+                                q = "select * from articles where pm_id = '"+pm_id + "' and concept_id like '%"+concept_id + "%' limit "+str(start)+" , "+str(end)+";"
                                 #print(q)
                                 Pointer.execute(q)
                                 records = Pointer.fetchall()
@@ -279,7 +280,7 @@ def fetch_by_tags_article():
                 elif (len(meshes) > 0 and len(concept_ids) == 0):
                     print("Only MESHES ...............")
                     for mesh in meshes:
-                        q = "select * from tb_articles where pmid = '"+pmid + "' and mesh like '%"+str(mesh) + "%' limit "+str(start)+" , "+str(end)+";"
+                        q = "select * from articles where pm_id = '"+pm_id + "' and mesh like '%"+str(mesh) + "%' limit "+str(start)+" , "+str(end)+";"
                         Pointer.execute(q)
                         records = Pointer.fetchall()
                         if (len(records) > 0):
@@ -289,7 +290,7 @@ def fetch_by_tags_article():
                 elif (len(meshes) == 0 and len(concept_ids) > 0):
 
                     for concept_id in concept_ids:
-                        q = "select * from tb_articles where pmid = '"+pmid + "' and concept_id_1 like '%"+concept_id + "%' limit "+str(start)+" , "+str(end)+";"
+                        q = "select * from articles where pm_id = '"+pm_id + "' and concept_id like '%"+concept_id + "%' limit "+str(start)+" , "+str(end)+";"
                         #print(q)
                         Pointer.execute(q)
                         records = Pointer.fetchall()
@@ -299,7 +300,7 @@ def fetch_by_tags_article():
                             found_res = 0
 
                 if (found_res == len(meshes) + len(concept_ids)):
-                    results.append(pmid)
+                    results.append(pm_id)
 
             print(results)
 
@@ -308,13 +309,13 @@ def fetch_by_tags_article():
                 i = 0
                 for result in results:
                     if (i == len(results) - 1):
-                        query += " pmid = '"+result +"' ) "
+                        query += " pm_id = '"+result +"' ) "
                     else:
-                        query += " pmid = '"+result +"' or "
+                        query += " pm_id = '"+result +"' or "
                     i += 1
 
 
-                q = "select * from tb_articles "+query + "limit "+str(start)+" , "+str(end)+";"
+                q = "select * from articles "+query + "limit "+str(start)+" , "+str(end)+";"
                 print(q)
                 Pointer.execute(q)
                 records = Pointer.fetchall()
@@ -332,13 +333,13 @@ def fetch_by_tags_article():
 @app.route('/fetch_drugs',methods=['POST'])  #method to fetch / search data from database
 def fetch_drugs():
     json = request.json
-    pmid = json['pmid']
-    concept_id_1 = json['concept_id_1']
-    if (pmid and concept_id_1 and request.method == 'POST'):
+    pm_id = json['pm_id']
+    concept_id = json['concept_id']
+    if (pm_id and concept_id and request.method == 'POST'):
 
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select * from tb_articles where (pmid = '"+str(pmid)+"')  and (domain_id = 'Drug');")
+        Pointer.execute("select * from articles where (pm_id = '"+str(pm_id)+"')  and (domain_id = 'Drug');")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -351,13 +352,13 @@ def fetch_drugs():
 @app.route('/fetch_condition',methods=['POST'])  #method to fetch / search data from database
 def fetch_condition():
     json = request.json
-    pmid = json['pmid']
-    concept_id_1 = json['concept_id_1']
-    if (pmid and concept_id_1 and request.method == 'POST'):
+    pm_id = json['pm_id']
+    concept_id = json['concept_id']
+    if (pm_id and concept_id and request.method == 'POST'):
 
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select * from tb_articles where (pmid = '"+str(pmid)+"')  and (domain_id = 'Condition');")
+        Pointer.execute("select * from articles where (pm_id = '"+str(pm_id)+"')  and (domain_id = 'Condition');")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -370,13 +371,13 @@ def fetch_condition():
 @app.route('/fetch_procedures',methods=['POST'])  #method to fetch / search data from database
 def fetch_procedures():
     json = request.json
-    pmid = json['pmid']
-    concept_id_1 = json['concept_id_1']
-    if (pmid and concept_id_1 and request.method == 'POST'):
+    pm_id = json['pm_id']
+    concept_id = json['concept_id']
+    if (pm_id and concept_id and request.method == 'POST'):
 
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
-        Pointer.execute("select * from tb_articles where (pmid = '"+str(pmid)+"')  and (domain_id = 'Procedure');")
+        Pointer.execute("select * from articles where (pm_id = '"+str(pm_id)+"')  and (domain_id = 'Procedure');")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -388,10 +389,10 @@ def fetch_procedures():
 
 @app.route('/get_database_table_as_dataframe',methods=['POST'])  #method to fetch / search data from database
 def get_database_table_as_dataframe():
-    """Connect to a table named 'tb_articles'. Returns pandas dataframe."""
+    """Connect to a table named 'articles'. Returns pandas dataframe."""
     try:
         connection =MySql.connect()
-        articles_df = pd.read_sql(sql="""Sselect * FROM tb_articles""",
+        articles_df = pd.read_sql(sql="""Sselect * FROM articles""",
                                con=connection)
         logging.info(articles_df.head())
         return articles_df
@@ -431,26 +432,49 @@ def display_about():
 @app.route('/get_data',methods=['POST','GET']) 
 def display_get():
     if request.method == "POST":
-        filter_data = request.get_json()[0]['filter'].split(',')
-        for i in filter_data:
-            print(i)
-    
-        try:            
-            connection = pymysql.connect(host='localhost',
-                                         port=3306,
-                                        user='root',
-                                        password='',
-                                        database='mydb')
-            cursor = connection.cursor()
-            sql = "SELECT * FROM articles"
-            cursor.execute(sql)
-            result = cursor.fetchall()
-            print(result)
-        except Error as err:
-            print(err)
-            results = {'processed': str(err)}
-            return jsonify(results)
+        flt_mesh = request.get_json()[0]['flt_mesh'].split(',')
+        flt_sd = request.get_json()[0]['flt_sd'].split(',')
+        flt_dt = request.get_json()[0]['flt_dt'].split(',')
+        flt_dc = request.get_json()[0]['flt_dc'].split(',')
+        flt_cc = request.get_json()[0]['flt_cc'].split(',')
+        print(flt_mesh)
+        print(flt_sd)
+        print(flt_dt)
+        print(flt_dc)
+        print(flt_cc)
+        sql_qeury = "select article_id from study_design_connect inner join (select id as sd_id from study_design where study_design in ("
+        for i in flt_sd:
+            if i > 0:
+                sql_qeury += ", "
+            sql_qeury += ("'" + i + "'")
+            
+        sql_qeury += ")) as sd on sd.sd_id=study_design_connect.study_design_id"
+        Pointer.execute(sql_qeury)
+        res_sd = Pointer.fetchall()
+        print(res_sd)
+        
+        sql_qeury = "select article_id from data_type_connect inner join (select id as dt_id from data_type where data_type in ("
+        for i in flt_dt:
+            if i > 0:
+                sql_qeury += ", "
+            sql_qeury += ("'" + i + "'")
 
+        sql_qeury += ")) as dt on dt.dt_id=data_type_connect.data_type_id"
+        Pointer.execute(sql_qeury)
+        res_dt = Pointer.fetchall()
+        print(res_dt)
+
+        sql_qeury = "select article_id from meshes_connect inner join (select id as mh_id from mesh where mesh in ("
+        for i in flt_mesh:
+            if i > 0:
+                sql_qeury += ", "
+            sql_qeury += ("'" + i + "'")
+
+        sql_qeury += ")) as mh on mh.mh_id=meshes_connect.mesh_id"
+        Pointer.execute(sql_qeury)
+        res_mesh = Pointer.fetchall()
+        print(res_mesh)
+        
         results = {'processed': 'true'}
         return jsonify(results)
     if request.method == "GET":
