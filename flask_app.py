@@ -1,12 +1,11 @@
 from email.errors import InvalidMultipartContentTransferEncodingDefect
-import json
 
 from urllib.robotparser import RequestRate
 from flask_restful import reqparse, Api, Resource , request
 from flaskext.mysql import MySQL
 from flask_cors import CORS, cross_origin
 from flask import Flask, jsonify, render_template, request, send_file, make_response, abort, session
-from numpy import int64
+from numpy import int64, true_divide
 # from plots_code import barchart_diseases
 import pymysql
 from pymysql import Error
@@ -19,12 +18,17 @@ app.config['MYSQL_DATABASE_USER'] = 'Tandem7'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'shani@@@@143'
 app.config['MYSQL_DATABASE_DB'] = 'Tandem7$articles_db'
 app.config['MYSQL_DATABASE_HOST'] = 'Tandem7.mysql.pythonanywhere-services.com'
+# app.config['MYSQL_DATABASE_USER'] = 'root'
+# app.config['MYSQL_DATABASE_PASSWORD'] = ''
+# app.config['MYSQL_DATABASE_DB'] = 'mydb'
+# app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+# app.config['MYSQL_DATABASE_PORT'] = 3306
 MySql.init_app(app)
+connection = MySql.connect()
+Pointer = connection.cursor()
 
 
 def insert_data(_table, _what, _where, _wval, _where1='', _wval1='', _where2='', _wval2='', _where3='', _wval3='', _where4='', _wval4=''):
-    connection = MySql.connect()
-    Pointer = connection.cursor()
     select_query = "SELECT " + _what + " FROM " + \
         _table + " WHERE " + _where + "=" + _wval + ";"
     print(select_query)    
@@ -48,8 +52,6 @@ def insert_data(_table, _what, _where, _wval, _where1='', _wval1='', _where2='',
 
 
 def insert_data_connect(_table, _val1, _val2):
-    connection = MySql.connect()
-    Pointer = connection.cursor()
     insert_query = insert_query = "INSERT INTO " + \
         _table + " VALUES (" + _val1 + ', ' + _val2 + ");"
     print(insert_query)
@@ -59,23 +61,22 @@ def insert_data_connect(_table, _val1, _val2):
 # Sevrer script with two API endpoints (Upload and Fetch) that only accept http or https POST requests
 @app.route('/add', methods=['POST']) #/add end point that can only be call via POST request
 def add_article():
-    connection = MySql.connect()
-    Pointer = connection.cursor()
     #get data from the Client side through API and put data to the database
-    json = request.json
+    json_data = request.get_json()
+    print(json_data)
     #print(json)
-    pm_id = int64(json['pmid'])
-    pm_link = json['pm_link']
-    date_pub = json['date_pub']
-    journal = json['journal']
-    abstract = json['abstract']
-    title = json['title']
-    mesh = json['mesh']
-    concept_id = int64(json['concept_id'])
-    study_design = json['study_design']
-    data_type = json['data_type']
-    domain_id = json['domain']
-    category_name = json['category_name']
+    pm_id = int64(json_data['pm_id'])
+    pm_link = json_data['pm_link']
+    date_pub = json_data['date_pub']
+    journal = json_data['journal']
+    abstract = json_data['abstract']
+    title = json_data['title']
+    mesh = json_data['mesh']
+    concept_id = int64(json_data['concept_id'])
+    study_design = json_data['study_design']
+    data_type = json_data['data_type']
+    domain_id = json_data['domain']
+    category_name = json_data['category_name']
     
     if pm_id and pm_link and date_pub and journal and abstract and title and mesh and concept_id and study_design and data_type and domain_id and category_name and request.method == 'POST':
         journal_id = insert_data(
@@ -112,20 +113,9 @@ def add_article():
                               ", " + str(concept_id), ', domain', ", '" + domain_id + "'",)
         insert_data_connect(
             'meshes_connect', str(article_id), str(mesh_id))
-        
-        
-        
-        
-        
-        # SQL_Query = "INSERT INTO tb_articles(pmid, pm_link, date_pub,journal,abstract,title,mesh,concept_id_1,concept_name,study_design,data_type,domain_id,category_name) VALUES(%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        # data = (pmid, pm_link, date_pub, journal, abstract, title, mesh, concept_id_1, concept_name, study_design, data_type,domain_id,category_name)
-        # connection =MySql.connect()
-        # Pointer = connection.cursor()
-        # Pointer.execute(SQL_Query, data)
         connection.commit()
         response = jsonify('Article Added!')
         response.status_code = 200 #if data addedd successfully: response 200
-
         return response
     else:
         return "err" # if error: response 500

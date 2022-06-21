@@ -1,6 +1,8 @@
+from os import sync
 from selectors import SelectSelector
 from turtle import tilt
 from unittest import result
+from wsgiref import headers
 import requests
 import pandas
 from flask import Flask, request, Response
@@ -11,7 +13,8 @@ import re
 import json
 
 
-SERVER_URL = 'http://tandem7.pythonanywhere.com' # same this for this one it's API_SERVER URL
+# SERVER_URL = 'http://localhost:5000' # same this for this one it's API_SERVER URL
+SERVER_URL = 'http://tandem7.pythonanywhere.com'
 endpoint = '/add'
 
 # It is the function to read your csv data returnd by scraping script that you have.
@@ -33,7 +36,7 @@ def upload_data():
         
             data['journal'] = re.split("\'|\"", csv_data['journal'][i])[1]
             data['pm_id'] = str(csv_data['pmid'][i])
-            data['pm_link'] = csv_data['pm_link'][i]0 
+            data['pm_link'] = csv_data['pm_link'][i]
             data['date_pub'] = re.split("\'|\"", csv_data['date_pub'][i])[1]
             data['abstract'] = re.split("\'|\"", csv_data['abstract'][i])[1]
             data['title'] = re.split("\'|\"", csv_data['title'][i])[1]
@@ -43,9 +46,21 @@ def upload_data():
             data['concept_id'] = str(csv_data['concept_id_1'][i])
             data['domain'] = csv_data['domain_id'][i]
             data['category_name'] = csv_data['category_name'][i]
-            print(data)
             # and here sending data to server and getting response.
-            res = requests.post(SERVER_URL + endpoint, json.dumps(data))
+            res = await requests.post(SERVER_URL + endpoint, json={
+                'journal': re.split("\'|\"", csv_data['journal'][i])[1],
+                'pm_id': str(csv_data['pmid'][i]),
+                'pm_link': csv_data['pm_link'][i],
+                'date_pub': re.split("\'|\"", csv_data['date_pub'][i])[1],
+                'abstract': re.split("\'|\"", csv_data['abstract'][i])[1],
+                'title': re.split("\'|\"", csv_data['title'][i])[1],
+                'study_design': csv_data['study_design'][i],
+                'data_type': csv_data['data_type'][i],
+                'mesh': csv_data['mesh'][i],
+                'concept_id': str(csv_data['concept_id_1'][i]),
+                'domain': csv_data['domain_id'][i],
+                'category_name': csv_data['category_name'][i]
+            })
             if (res.status_code == 200):
                 print(res.text + ": "+str(i) + " out of {}".format(len(csv_data['title'])))
             else:
