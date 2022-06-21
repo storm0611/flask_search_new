@@ -1,20 +1,19 @@
-from os import sync
-from selectors import SelectSelector
-from turtle import tilt
-from unittest import result
-from wsgiref import headers
+# from selectors import SelectSelector
+# from turtle import tilt
+# from unittest import result
+# from wsgiref import headers
 import requests
 import pandas
-from flask import Flask, request, Response
-import pymysql
-from pymysql import NULL, Error
-from datetime import datetime
+# from flask import Flask, request, Response
+# import pymysql
+# from pymysql import NULL, Error
+# from datetime import datetime
 import re
-import json
+# import json
 
 
-# SERVER_URL = 'http://localhost:5000' # same this for this one it's API_SERVER URL
-SERVER_URL = 'http://tandem7.pythonanywhere.com'
+SERVER_URL = 'http://localhost:5000' # same this for this one it's API_SERVER URL
+# SERVER_URL = 'http://tandem7.pythonanywhere.com'
 endpoint = '/add'
 
 # It is the function to read your csv data returnd by scraping script that you have.
@@ -30,24 +29,24 @@ def read_csv_data():
 def upload_data():
         csv_data = read_csv_data()
 
-        for i in range(len(csv_data)):
+        for i in range(641, len(csv_data)):
     
-            data = {}    
+            # data = {}    
         
-            data['journal'] = re.split("\'|\"", csv_data['journal'][i])[1]
-            data['pm_id'] = str(csv_data['pmid'][i])
-            data['pm_link'] = csv_data['pm_link'][i]
-            data['date_pub'] = re.split("\'|\"", csv_data['date_pub'][i])[1]
-            data['abstract'] = re.split("\'|\"", csv_data['abstract'][i])[1]
-            data['title'] = re.split("\'|\"", csv_data['title'][i])[1]
-            data['study_design'] = csv_data['study_design'][i]
-            data['data_type'] = csv_data['data_type'][i]
-            data['mesh'] = csv_data['mesh'][i]
-            data['concept_id'] = str(csv_data['concept_id_1'][i])
-            data['domain'] = csv_data['domain_id'][i]
-            data['category_name'] = csv_data['category_name'][i]
+            # data['journal'] = re.split("\'|\"", csv_data['journal'][i])[1]
+            # data['pm_id'] = str(csv_data['pmid'][i])
+            # data['pm_link'] = csv_data['pm_link'][i]
+            # data['date_pub'] = re.split("\'|\"", csv_data['date_pub'][i])[1]
+            # data['abstract'] = re.split("\'|\"", csv_data['abstract'][i])[1]
+            # data['title'] = re.split("\'|\"", csv_data['title'][i])[1]
+            # data['study_design'] = csv_data['study_design'][i]
+            # data['data_type'] = csv_data['data_type'][i]
+            # data['mesh'] = csv_data['mesh'][i]
+            # data['concept_id'] = str(csv_data['concept_id_1'][i])
+            # data['domain'] = csv_data['domain_id'][i]
+            # data['category_name'] = csv_data['category_name'][i]
             # and here sending data to server and getting response.
-            res = await requests.post(SERVER_URL + endpoint, json={
+            res = requests.post(SERVER_URL + endpoint, json={
                 'journal': re.split("\'|\"", csv_data['journal'][i])[1],
                 'pm_id': str(csv_data['pmid'][i]),
                 'pm_link': csv_data['pm_link'][i],
@@ -65,6 +64,7 @@ def upload_data():
                 print(res.text + ": "+str(i) + " out of {}".format(len(csv_data['title'])))
             else:
                 print(res.text)
+            
             
             # category_name = csv_data['category_name'][i]
             # print(category_name)
