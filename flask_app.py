@@ -92,7 +92,7 @@ def add_article():
         insert_query = "INSERT INTO articles (pm_id, pm_link, date_pub, abstract, title, journal_id, category_name) VALUES (" + \
             str(pm_id) + ", '" + str(pm_link) + "', '" + date_pub + "', '" + \
             abstract + "', '" + title + "', " + str(journal_id) + ", '" + category_name + "');"
-        print(insert_query)
+        # print(insert_query)
         Pointer.execute(insert_query)
         connection.commit()
         select_query = "SELECT id FROM articles;"

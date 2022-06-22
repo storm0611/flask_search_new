@@ -2,7 +2,6 @@
 # from turtle import tilt
 # from unittest import result
 # from wsgiref import headers
-import time
 import requests
 import pandas
 # from flask import Flask, request, Response
@@ -24,14 +23,14 @@ def read_csv_data():
     # can you please show me this .csv file or put this csv file in same path of sccript?
     # yeah let me search for it..
     # you can also set it's path to csv file
-    data = pandas.read_csv('final_df_sample_noindex_with_domain1.csv', sep=',')
+    data = pandas.read_csv('final_df_sample_noindex_with_domain1.csv',
+                           sep=',', encoding='utf-8', encoding_errors='replace')
     return data # and here it's returning all the readed data from csv file , I am using pandas for reading file
 
 def upload_data():
         csv_data = read_csv_data()
         
         for i in range(len(csv_data)):
-            print(i)
             # data = {}    
         
             # data['journal'] = re.split("\'|\"", csv_data['journal'][i])[1]
@@ -47,20 +46,6 @@ def upload_data():
             # data['domain'] = csv_data['domain_id'][i]
             # data['category_name'] = csv_data['category_name'][i]
             # and here sending data to server and getting response.
-            # print({
-            #     'journal': re.split("\'|\"", csv_data['journal'][i])[1],
-            #     'pm_id': str(csv_data['pmid'][i]),
-            #     'pm_link': csv_data['pm_link'][i],
-            #     'date_pub': re.split("\'|\"", csv_data['date_pub'][i])[1],
-            #     'abstract': re.split("\'|\"", csv_data['abstract'][i])[1],
-            #     'title': re.split("\'|\"", csv_data['title'][i])[1],
-            #     'study_design': csv_data['study_design'][i],
-            #     'data_type': csv_data['data_type'][i],
-            #     'mesh': csv_data['mesh'][i],
-            #     'concept_id': str(csv_data['concept_id_1'][i]),
-            #     'domain': csv_data['domain_id'][i],
-            #     'category_name': csv_data['category_name'][i]
-            # })
             res = requests.post(url=SERVER_URL + endpoint, json={
                 'journal': re.split("\'|\"", csv_data['journal'][i])[1],
                 'pm_id': str(csv_data['pmid'][i]),
