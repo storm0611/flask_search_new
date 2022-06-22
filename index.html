@@ -1,17 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <style>
-      #buttondrugs {
-       top:90%;
-       left:90%;
-       width:75px;
-       height:40px;
-       position: absolute;
-       z-index: 2;
-       background: orange; 
-      }
-    </style>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta
@@ -35,8 +24,120 @@
 
     <link rel="stylesheet" href="dist/virtual-select.min.css" />
 
-    <script src="dist/virtual-select.min.js"></script>
+    <style>
+      #buttondrugs {
+       top:90%;
+       left:90%;
+       width:75px;
+       height:40px;
+       position: absolute;
+       z-index: 2;
+       background: orange; 
+      }
+      /* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
 
+/* Modal Content */
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 80%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+  from {top:-300px; opacity:0} 
+  to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.close {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header {
+  padding: 2px 16px;
+  background-color: #5cb85c;
+  color: white;
+}
+
+.modal-body {padding: 2px 16px;}
+
+.modal-footer {
+  padding: 2px 16px;
+  background-color: #5cb85c;
+  color: white;
+}
+    </style>
+
+    <script src="dist/virtual-select.min.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"
+    ></script>
+    <script
+    src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"
+    ></script>
+    <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"
+    ></script>
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"
+    ></script>
+    
+    <script src="jquery-js/jquery.amsify.suggestags.js"></script>
+    
+    <script
+    src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+    integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+    crossorigin="anonymous"
+    ></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js"></script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+    
     <title>Document</title>
   </head>
 
@@ -82,8 +183,8 @@
         
         <div class="example-study-design-select"></div>
         <div class="example-data-type-select"></div>
-        <div class="example-drug_category-select"></div>
-        <div class="example-condition_category-select"></div>
+        <!--<div class="example-drug_category-select"></div>
+        <div class="example-condition_category-select"></div>!-->
         <input type="text"class="select2" name="select2"  value="439777">
         
       </div>
@@ -93,13 +194,13 @@
       </div>
 
       <!-- <img style="display:none;" id="bigpic" src="bigpic" /> !-->
-      <button id="buttondrugs" onclick="showPicture()">Visualize</button>
+      <button id="buttondrugs" >Visualize</button>
 
 
 
     <div class="cards-main">
     </div>
-    <div class="preload" style="display: block"><img src="http://i.imgur.com/KUJoe.gif">
+    <div class="preload"><img src="http://i.imgur.com/KUJoe.gif">
     </div>
 
 
@@ -107,53 +208,39 @@
       Load More
       </button>
 
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Frequency Plots</h2>
+    </div>
+    <div class="modal-body" style="height: 500px">
+      <div id="chartContainer" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
+    </div>
+    <div class="modal-footer">
+      <h3></h3>
+    </div>
+  </div>
+
+</div>
     
-      
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-
-    <script
-      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
-      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
-      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://code.jquery.com/jquery-3.3.1.min.js"
-      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-      crossorigin="anonymous"
-    ></script>
-
-    <script src="jquery-js/jquery.amsify.suggestags.js"></script>
-
-    <script
-      src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-      integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-      crossorigin="anonymous"
-    ></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js"></script>
-
-    <script>
+<script>
 
       var SERVER_URL = 'http://localhost:5000';
       //var SERVER_URL = 'http://tandem7.pythonanywhere.com';
       get_study_design()
       get_data_type()
-      get_drug_categories()
-      get_condition_categories()
+      //get_drug_categories()
+      //get_condition_categories()
+
+      res = {}
 
       async function get_study_design(){
        
-        var response =  await fetch(SERVER_URL + "/get_study_design", {
+        var response =  await fetch(SERVER_URL + "/get_study_design", 
+        {
           headers: {
             "Content-Type": "application/json",
           },
@@ -387,21 +474,30 @@
         'flt_mesh': [],
         'flt_sd': [],
         'flt_dt': [],
-        'flt_dc': [],
-        'flt_cc': []
+        'flt_limit': 3
       };
       
+
       function get_data() {
-        $.ajax({
+        $.ajax(SERVER_URL + '/get_data', {
             type: "POST",
-            url: SERVER_URL + '/get_data',
-            dataType: "json",
-            headers: {
-              'Content-Type':'application/json'
-            },
             data: JSON.stringify(flt_data),
+            headers: {
+              "Content-Type": "application/json",
+            },
+            beforeSend: function() {
+            // setting a timeout
+              document.getElementsByClassName('preload')[0].style.display = "block"
+            },
             success: function (data) {
-              console.log(data)
+              res = data
+              if (res.length){
+                $("#buttondrugs").attr("disabled", false);
+              }
+              else{
+                $("#buttondrugs").attr("disabled", true);
+              }
+              display_data(res)
             },
             error: function (xhr, exception) {
                 var msg = "";
@@ -429,26 +525,34 @@
       $('.example-study-design-select').change(function() {
         flt_data['flt_sd'] = this.value;
         console.log(flt_data)
+        get_data()
+        
         //display_data(filter_study_design(this.value))
       });
 
       $('.example-data-type-select').change(function() {
         flt_data['flt_dt'] = this.value;
         console.log(flt_data)
+        get_data()
+        
         //display_data(filter_data_type(this.value))
       });
-
+      /*
       $('.example-drug_category-select').change(function() {
         flt_data['flt_dc'] = this.value;
         console.log(flt_data)
+        get_data()
         //display_data(filter_data_type(this.value))
       });
 
+      
       $('.example-condition_category-select').change(function() {
         flt_data['flt_cc'] = this.value;
         console.log(flt_data)
+        get_data()
         //display_data(filter_data_type(this.value))
       });
+      */
 
       $('input[name="select2"]').amsifySuggestags({
 					suggestions: ['anemia', 'tacrolimus', 'female', 'male', 'neutropenia',
@@ -487,6 +591,8 @@
               //show_cards_data("anemia")
               flt_data['flt_mesh'] = $('input[name="select2"]').val();
               console.log(flt_data);
+              get_data()
+              
           },
           afterRemove: function(e){
             start = 0
@@ -494,12 +600,13 @@
             datafound = 0
             //console.log('removed!' + e)
             document.getElementsByClassName('cards-main')[0].innerHTML = ''
+            flt_data['flt_mesh'] = $('input[name="select2"]').val()
+            console.log(flt_data)
+            get_data()
             if ($('input[name="select2"]').val().length > 0){
               main_searched_data_ = []
               crds = 0
               //get_data_by_tags($('input[name="select2"]').val())
-              flt_data['flt_mesh'] = $('input[name="select2"]').val()
-              console.log(flt_data)
             }else{
               document.getElementById('loadbtn').textContent = "Load more"
               document.getElementById('loadbtn').disabled = true
@@ -509,77 +616,67 @@
 				});
 
       document.getElementsByClassName('amsify-suggestags-input')[0].placeholder = "Type Concept ID / Name...";
-
+      btn_text = {
+        0: "Load less",
+        3: "Load more"
+      }
       $('#loadbtn').click(function(){
-        //get_data_by_tags($('input[name="select2"]').val())
+        if (res.length) {
+          flt_data['flt_limit'] = 3 - flt_data['flt_limit']
+          display_data(res)
+            document.getElementById('loadbtn').textContent = btn_text[flt_data['flt_limit']]
+          //get_data_by_tags($('input[name="select2"]').val())
+        }
       });
 
       
       function display_data(elements){
 
-        study_design = document.querySelector('.example-study-design-select').value;
-        data_type = document.querySelector('.example-data-type-select').value;
-        condition_category = document.querySelector('.example-condition_category-select').value;
-        drug_category = document.querySelector('.example-drug_category-select').value;
-
-        if (study_design.length > 0 || data_type.length > 0 || condition_category.length > 0 || drug_category.length >0){
-            if (study_design.length > 0){
-              elements = filter_study_design(study_design)
-            }
-            else if (data_type.length > 0){
-              elements = filter_data_type(data_type)
-            }
-            else if (condition_category.length > 0){
-              elements = filter_condition_category(condition_category)
-            }
-            else if (data_type.length > 0){
-              elements = filter_drug_category(drug_category)
-            }
-        }
-
         document.getElementsByClassName('p-result')[0].textContent = "Showing "+elements.length+" results"
         document.getElementsByClassName('cards-main')[0].innerHTML = ''
         console.log(elements)
-        i = 0
-        elements.forEach(element =>{
-          abstract_data = element.abstract_data.replace("['",'').replace("']",'')
-        i ++;
-        document.getElementsByClassName('cards-main')[0].innerHTML += 
+        if (flt_data['flt_limit'] && elements.length)
+          lmt = flt_data['flt_limit']
+        else
+          lmt = elements.length
+        for (i = 0; i < lmt - 1; i++){
+          element = elements[i]
+            document.getElementsByClassName('cards-main')[0].innerHTML += 
           `
           <div class="card card-`+i+`">
-            <a style="color:black;" href="`+element.pm_link+`">
-            <div class="card-top"><p class="card-top-date badge badge-primary" >`+element.journal.toString().replace("['",'').replace("']",'')+`</p></div>
+            <a style="color:black;" href="`+element['pm_link']+`" target="_blank">
+            <div class="card-top"><p class="card-top-date badge badge-primary" >`+element['journal']+`</p></div>
         <div class="card-body">
-          <h5 class="card-title">`+element.title.replace("['",'').replace("']",'')+`</h5>
+          <h5 class="card-title">`+element['title']+`</h5>
 
           <div class="attrs">
             
-            <div class="db-cols badge badge-success"><a style="color:white;"href="https://athena.ohdsi.org/search-terms/terms/`+element.concept_id_1+`">`+element.concept_id_1+`</a></div>
-            <div class="db-cols badge badge-success">`+element.mesh+`</div>
-            <div class="db-cols badge badge-warning">`+element.date_pub.toString().replace("['",'').replace("']",'')+`</div>
-            <div class="db-cols badge badge-danger">`+element.study_design+`</div>
-            <div class="db-cols badge badge-info">`+element.data_type+`</div>
+            <div class="db-cols badge badge-success"><a style="color:white;"href="https://athena.ohdsi.org/search-terms/terms/`+element['concept_id']+`">`+element['concept_id']+`</a></div>
+            <div class="db-cols badge badge-success">`+element['mesh']+`</div>
+            <div class="db-cols badge badge-warning">`+element['date_pub']+`</div>
+            <div class="db-cols badge badge-danger">`+element['study_design']+`</div>
+            <div class="db-cols badge badge-info">`+element['data_type']+`</div>
             </div>
           <div>
-            <p class="card-text more" style="display:none;" id='tx-more-`+i+`'>`+abstract_data+`<Button onclick="toogle('`+i+`')" style="margin:1%; border: 0.5px solid;background: white;color: black;" id="bt-`+i+`" class="badge badge-primary">See more</Button></p>
-            <p class="card-text less" style="display:block;" id='tx-less-`+i+`'>`+abstract_data.toString().substring(0, abstract_data.length / 3)+`...<Button onclick="toogle('`+i+`')" style="margin:1%; border: 0.5px solid;background: white;color: black;" id="bt-`+i+`" class="badge badge-primary">See more</Button></p>
+            <p class="card-text more" style="display:none;" id='tx-more-`+i+`'>`+element['abstract']+`<Button onclick="toogle('`+i+`')" style="margin:1%; border: 0.5px solid;background: white;color: black;" id="bt-`+i+`" class="badge badge-primary">See more</Button></p>
+            <p class="card-text less" style="display:block;" id='tx-less-`+i+`'>`+element['abstract']+`...<Button onclick="toogle('`+i+`')" style="margin:1%; border: 0.5px solid;background: white;color: black;" id="bt-`+i+`" class="badge badge-primary">See more</Button></p>
             
           </div>
             <div style="margin:1%;"><h4><strong>Short overview of the study</strong></h4></div>
 
             <div class="data-points" style="margin:1%;">
               
-              
               <div class="point-1">
-                <div class="point"><strong class= "db-cols badge badge-success">Condition </strong>`+element.condition_+`</div>
+                <div class="point"><strong class= "db-cols badge badge-success">`+element['domain']+`</strong>`+element['domain']+`</div>
+                <!--
               <div class="point"><strong class="db-cols badge badge-info">Drug </strong>`+element.drug_+`</div>
               <div class="point"><strong class="db-cols badge badge-warning">Procedures </strong>`+element.procedures_+`</div>
                 </div>
-
+                !-->
                 <div class="point-1">
                 <div class="point"><strong>Study population: </strong>Not available yet.</div>
-              <div class="point"><strong>Study Design: </strong>`+element.study_design+`</div>
-              <div class="point"><strong>Data Type: </strong>`+element.data_type+`</div>
+              <div class="point"><strong>Study Design: </strong>`+element['study_design']+`</div>
+              <div class="point"><strong>Data Type: </strong>`+element['data_type']+`</div>
               <div class="point"><strong>Sample size: </strong>Not available yet.</div>
               <div style="" class="point"><strong>Geography: </strong>Not available yet.</div>
                 </div>
@@ -589,195 +686,10 @@
       </div>
       </a>
     </div>`
-        })
-      }      
-
-      async function get_data_by_tags(tags) {
-        main_searched_data = []
-        datafound = 0
-        crds = 0
-        //tags = tags.split(',')
-
-        document.getElementById('loadbtn').disabled = true
-        document.getElementsByClassName('preload')[0].style.display = "block";
-
-        study_value = document.querySelector('.example-study-design-select').value;
-        data_type_value = document.querySelector('.example-data-type-select').value;
-        
-        
-        const params = {
-          tags:tags,
-          start: start.toString(),
-          end: "50",
-          
-        };
-
-        var response = await fetch(SERVER_URL + "/fetch_by_tags", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify(params),
-        });
-        
-        var data = await response.json();
-        
-        
-        var i = 0
-        
-        if (data.length == 0){
-          console.log("s: "+start)
-          if (start == 0){
-            document.getElementById('loadbtn').textContent = "Load More"
-          }else{
-            document.getElementById('loadbtn').textContent = "No more available data..."
-          }
-          document.getElementById('loadbtn').disabled = true
-        }else{
-          document.getElementById('loadbtn').disabled = false
-          document.getElementById('loadbtn').textContent = "Load More"
-          i = start
-          start += data.length;
-          console.log(start)
-          console.log("data:len: "+data.length)
-          
         }
+        document.getElementsByClassName('preload')[0].style.display = "none"
         
-        
-
-        
-        document.getElementsByClassName('preload')[0].style.display = "none";
-
-        data = data.filter((obj, pos, arr) => {
-            return data.map(mapObj =>
-                  mapObj.pmid).indexOf(obj.pmid) == pos ;
-            });
-        console.log(data)
-        datafound = data.length
-        document.getElementsByClassName('p-result')[0].textContent = "Showing "+data.length+" results"
-        x_ = 0
-        await data.forEach(async (element)  =>  {
-          x_ ++;
-          
-
-           //drugs_elems = await get_drugs(element.pmid,element.concept_id_1)
-           
-           const params = {
-            pmid:element.pmid,
-            concept_id_1:"0"
-          }
-          var response = await fetch(SERVER_URL + "/fetch_drugs", {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: JSON.stringify(params),
-          });
-          
-          var drugs_elems = await response.json()
-          main_searched_data.push(drugs_elems)
-          
-
-
-
-
-
-          const params_con = {
-          pmid:element.pmid,
-          concept_id_1:element.concept_id_1
-        }
-        var response = await fetch(SERVER_URL + "/fetch_condition", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify(params_con),
-        });
-        
-        var condition_elems = await response.json();
-        const params_pro = {
-          pmid:element.pmid,
-          concept_id_1:element.concept_id_1
-        }
-        var response = await fetch(SERVER_URL + "/fetch_procedures", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify(params_pro),
-        });
-        
-        var procedures_elems = await response.json();
-        
-          
-
-          drugs_elems = drugs_elems.filter((obj, pos, arr) => {
-            return drugs_elems.map(mapObj =>
-                  mapObj.concept_id_1).indexOf(obj.concept_id_1) == pos ;
-            });
-
-            condition_elems = condition_elems.filter((obj, pos, arr) => {
-          return condition_elems.map(mapObj =>
-                mapObj.concept_id_1).indexOf(obj.concept_id_1) == pos ;
-          });
-
-          procedures_elems = procedures_elems.filter((obj, pos, arr) => {
-          return procedures_elems.map(mapObj =>
-                mapObj.concept_id_1).indexOf(obj.concept_id_1) == pos ;
-          });
-          i += 1
-          
-          abstract_data = element.abstract.replace("['",'').replace("']",'')
-
-
-
-          drug_ = ''
-          drugs_elems.forEach(drug_el =>{
-            drug_ += "<br>"+ drug_el.mesh + "<a href='https://athena.ohdsi.org/search-terms/terms/"+drug_el.concept_id_1+"'>  "+drug_el.concept_id_1 + "</a> "
-          });
-          condition_ = ''
-          condition_elems.forEach(drug_el =>{
-            condition_ += "<br>"+ drug_el.mesh + "<a href='https://athena.ohdsi.org/search-terms/terms/"+drug_el.concept_id_1+"'>  "+drug_el.concept_id_1  + "  </a> "
-          });
-          procedures_ = ''
-
-          procedures_elems.forEach(drug_el =>{
-            procedures_ += "<br>"+ drug_el.mesh + "<a href='https://athena.ohdsi.org/search-terms/terms/"+drug_el.concept_id_1+"'>  "+drug_el.concept_id_1  + "</a> "
-          });
-          searched_data = {}
-          searched_data['mesh'] = element.mesh
-          searched_data['pm_link'] = element.pm_link
-          searched_data['journal'] = element.journal.replace("['",'').replace("']",'')
-          searched_data['title'] = element.title.replace("['",'').replace("']",'')
-          searched_data['concept_id_1'] = element.concept_id_1
-          searched_data['concept_id_link'] = "https://athena.ohdsi.org/search-terms/terms/"+element.concept_id_1
-          searched_data['date_pub'] = element.date_pub.replace("['",'').replace("']",'')
-          searched_data['study_design'] = element.study_design
-          searched_data['data_type'] = element.data_type
-          searched_data['abstract_data'] = abstract_data
-          searched_data['drug_'] = drug_
-          searched_data['condition_'] = condition_
-          searched_data['procedures_'] = procedures_
-          
-          show_cards_data(searched_data)
-          
-          //console.log(element)
-
-          
-          
-
-
-          console.log(x_)
-      
-          
-          
-        
-        });
-        //console.log(main_searched_data)
-        //console.log(main_searched_data)
-        return "complete...."
-        //console.log(main_searched_data.length)
-      }
+      }   
 
       function toogle(id){
           var bt = document.getElementById('bt-'+id)
@@ -791,6 +703,69 @@
             bt.textContent = "See more"
           }
       }
+
+      // Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("buttondrugs");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close");
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  var condition_frequency = (res[res.length - 1]['n_mesh_contition'] * 100 / (res.length - 1)).toString().split('.')[0]
+  var drug_frequency = (res[res.length - 1]['n_mesh_drug'] * 100 / (res.length - 1)).toString().split('.')[0]
+  var options = {
+	animationEnabled: true,
+	title: {
+		text: "Condition and Drug Frequency",                
+		fontColor: "Peru"
+	},	
+	axisY: {
+		tickThickness: 0,
+		lineThickness: 0,
+		valueFormatString: " ",
+		gridThickness: 0                    
+	},
+	axisX: {
+		tickThickness: 0,
+		lineThickness: 0,
+		labelFontSize: 18,
+		labelFontColor: "Peru"				
+	},
+	data: [{
+		indexLabelFontSize: 26,
+		toolTipContent: "<span style=\"color:#62C9C3\">{indexLabel}:</span> <span style=\"color:#CD853F\"><strong>{y}</strong></span>",
+		indexLabelPlacement: "inside",
+		indexLabelFontColor: "purple",
+		indexLabelFontWeight: 600,
+		indexLabelFontFamily: "Verdana",
+		color: "#62C9C3",
+		type: "bar",
+		dataPoints: [
+			{ y: parseInt(condition_frequency), label: condition_frequency + "%", indexLabel: "Condition" },
+			{ y: parseInt(drug_frequency), label: drug_frequency + "%", indexLabel: "Drug" },
+			{ y: 100, label: "100%", indexLabel: "" }
+		]
+	}]
+};
+$("#chartContainer").CanvasJSChart(options);
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
     </script>
   </body>
 </html>

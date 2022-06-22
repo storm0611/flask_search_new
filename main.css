@@ -150,8 +150,11 @@
 
 
 .preload{
+    position: fixed;
+    z-index: 10;
     flex: 1;
     margin: 2%;
+    margin-top: 450px;
 }
 
 .attrs{
