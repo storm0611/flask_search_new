@@ -64,7 +64,6 @@ def insert_data_connect(_table, _val1, _val2):
 def add_article():
     #get data from the Client side through API and put data to the database
     json_data = request.get_json()
-    print(json_data)
     #print(json)
     pm_id = int64(json_data['pm_id'])
     pm_link = json_data['pm_link']
@@ -87,7 +86,7 @@ def add_article():
         insert_query = "INSERT INTO articles (pm_id, pm_link, date_pub, abstract, title, journal_id, category_name) VALUES (" + \
             str(pm_id) + ", '" + str(pm_link) + "', '" + date_pub + "', '" + \
             abstract + "', '" + title + "', " + str(journal_id) + ", '" + category_name + "');"
-        print(insert_query)
+        # print(insert_query)
         Pointer.execute(insert_query)
         connection.commit()
         select_query = "SELECT id FROM articles;"
@@ -114,12 +113,13 @@ def add_article():
                               ", " + str(concept_id), ', domain', ", '" + domain_id + "'",)
         insert_data_connect(
             'meshes_connect', str(article_id), str(mesh_id))
-        connection.commit()
         response = jsonify('Article Added!')
         response.status_code = 200 #if data addedd successfully: response 200
         return response
     else:
-        return "err" # if error: response 500
+        # if error: response 500
+        response = jsonify('err')
+        return response
 
 
 @app.route('/fetch',methods=['POST'])  #Method to fetch / search data from the database
