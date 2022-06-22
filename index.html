@@ -185,7 +185,7 @@
         <div class="example-data-type-select"></div>
         <!--<div class="example-drug_category-select"></div>
         <div class="example-condition_category-select"></div>!-->
-        <input type="text"class="select2" name="select2"  value="439777">
+        <input type="text"class="select2" name="select2" value="439777">
         
       </div>
       
@@ -230,12 +230,12 @@
 
       var SERVER_URL = 'http://localhost:5000';
       //var SERVER_URL = 'http://tandem7.pythonanywhere.com';
+      var res = {}
       get_study_design()
       get_data_type()
       //get_drug_categories()
       //get_condition_categories()
 
-      res = {}
 
       async function get_study_design(){
        
@@ -493,9 +493,11 @@
               res = data
               if (res.length){
                 $("#buttondrugs").attr("disabled", false);
+                $("#loadbtn").attr("disabled", false);
               }
               else{
                 $("#buttondrugs").attr("disabled", true);
+                $("#loadbtn").attr("disabled", true);
               }
               display_data(res)
             },
@@ -603,14 +605,6 @@
             flt_data['flt_mesh'] = $('input[name="select2"]').val()
             console.log(flt_data)
             get_data()
-            if ($('input[name="select2"]').val().length > 0){
-              main_searched_data_ = []
-              crds = 0
-              //get_data_by_tags($('input[name="select2"]').val())
-            }else{
-              document.getElementById('loadbtn').textContent = "Load more"
-              document.getElementById('loadbtn').disabled = true
-            }
           }
           
 				});
@@ -629,7 +623,6 @@
         }
       });
 
-      
       function display_data(elements){
 
         document.getElementsByClassName('p-result')[0].textContent = "Showing "+elements.length+" results"

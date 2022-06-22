@@ -481,7 +481,10 @@ def display_get():
             Pointer.execute(sql_query)
             res_dt = Pointer.fetchall()
             for j in res_dt:
-                sign[j[0]] += 1
+                if sign[j[0]] == 1:
+                    sign[j[0]] += 1
+                else:
+                    sign[j[0]] = 0
              
         i = 0   
         sql_query = ""
@@ -496,11 +499,17 @@ def display_get():
             Pointer.execute(sql_query)
             res_mh = Pointer.fetchall()
             for j in res_mh:
-                sign[j[0]] += 1
+                if sign[j[0]] == 2:
+                    sign[j[0]] += 1
+                else:
+                    sign[j[0]] = 0
+                    
 
         if max(sign):
             results = []
             res_id = ", ".join([str(i) for i in np.where(sign == max(sign))[0]])
+            print(max(sign))
+            # print(np.where(sign == max(sign))[0])
             # for barchart
             sql_query = "select distinct mesh from mesh inner join (select mesh_id from meshes_connect where article_id in (" + res_id + ")) as mh_id on mh_id.mesh_id=mesh.id && mesh.domain='Condition'"
             Pointer.execute(sql_query)
