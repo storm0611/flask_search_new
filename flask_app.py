@@ -510,16 +510,6 @@ def display_get():
             res_id = ", ".join([str(i) for i in np.where(sign == max(sign))[0]])
             print(max(sign))
             # print(np.where(sign == max(sign))[0])
-            # for barchart
-            sql_query = "select distinct mesh from mesh inner join (select mesh_id from meshes_connect where article_id in (" + res_id + ")) as mh_id on mh_id.mesh_id=mesh.id && mesh.domain='Condition'"
-            Pointer.execute(sql_query)
-            n_mesh_condition = len(Pointer.fetchall())
-            
-            sql_query = "select distinct mesh from mesh inner join (select mesh_id from meshes_connect where article_id in (" + res_id + ")) as mh_id on mh_id.mesh_id=mesh.id && mesh.domain='Drug'"
-            Pointer.execute(sql_query)
-            n_mesh_drug = len(Pointer.fetchall())
-
-            # end for barchart
             sql_query = "select journal, a_id from journals inner join (select id as a_id, journal_id from articles where id in (" + res_id + ")) as jo on jo.journal_id=journals.id order by ranking asc"
             Pointer.execute(sql_query)
             res_journal_a_id = Pointer.fetchall()
@@ -592,10 +582,6 @@ def display_get():
                     'domain': res_domain,
                     'journal': res_journal
                 })
-            results.append({
-                'n_mesh_contition': n_mesh_condition,
-                'n_mesh_drug': n_mesh_drug
-            })
         else:
             results = []   
             
