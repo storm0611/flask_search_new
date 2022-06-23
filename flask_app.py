@@ -18,16 +18,20 @@ import logging
 import numpy as np
 
 app = Flask(__name__)
-# app.config['MYSQL_DATABASE_USER'] = 'Tandem7'
-# app.config['MYSQL_DATABASE_PASSWORD'] = 'shani@@@@143'
-# app.config['MYSQL_DATABASE_DB'] = 'Tandem7$articles_db'
-# app.config['MYSQL_DATABASE_HOST'] = 'Tandem7.mysql.pythonanywhere-services.com'
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = ''
-app.config['MYSQL_DATABASE_DB'] = 'mydb'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+# CORS(app)
+app.config['CORS_ORIGINS'] = ["*"] 
+app.config['CORS_HEADERS'] = ['Content-Type']
 
-cors = CORS(app)
+CORS(app)
+app.config['MYSQL_DATABASE_USER'] = 'Tandem7'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'shani@@@@143'
+app.config['MYSQL_DATABASE_DB'] = 'Tandem7$articles_db'
+app.config['MYSQL_DATABASE_HOST'] = 'Tandem7.mysql.pythonanywhere-services.com'
+# app.config['MYSQL_DATABASE_USER'] = 'root'
+# app.config['MYSQL_DATABASE_PASSWORD'] = ''
+# app.config['MYSQL_DATABASE_DB'] = 'mydb'
+# app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+
 MySql = MySQL()
 MySql.init_app(app)
 connection = MySql.connect()
@@ -147,6 +151,7 @@ def fetch_article():
 
 
 @app.route('/get_study_design',methods=['POST'])
+@cross_origin()
 def get_study_design():
     if (request.method == 'POST'):
         connection =MySql.connect()
@@ -156,6 +161,7 @@ def get_study_design():
 
         response = jsonify(records)
         response.status_code = 200
+        response.headers.add('Access-Control-Allow-Origin', '*')
         return response #return all the rows (start , end)
     else:
         return "err"
@@ -171,6 +177,7 @@ def get_drug_categories():
 
         response = jsonify(records)
         response.status_code = 200
+        response.headers.add('Access-Control-Allow-Origin', '*')
         return response #return all the rows (start , end)
     else:
         return "err"
@@ -185,6 +192,7 @@ def get_condition_categories():
 
         response = jsonify(records)
         response.status_code = 200
+        response.headers.add('Access-Control-Allow-Origin', '*')
         return response #return all the rows (start , end)
     else:
         return "err"
@@ -192,6 +200,7 @@ def get_condition_categories():
 
 
 @app.route('/get_data_type',methods=['POST'])
+@cross_origin()
 def get_data_type():
     if (request.method == 'POST'):
 
@@ -202,6 +211,7 @@ def get_data_type():
 
         response = jsonify(records)
         response.status_code = 200
+        response.headers.add('Access-Control-Allow-Origin', '*')
         return response #return all the rows (start , end)
     else:
         return "err"
@@ -341,7 +351,7 @@ def fetch_drugs():
     pm_id = json['pm_id']
     concept_id = json['concept_id']
     if (pm_id and concept_id and request.method == 'POST'):
-
+        
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
         Pointer.execute("select * from articles where (pm_id = '" +
@@ -350,6 +360,7 @@ def fetch_drugs():
 
         response = jsonify(records)
         response.status_code = 200
+        response.headers.add('Access-Control-Allow-Origin', '*')
         return response #return all the rows (start , end)
     else:
         return "err"
@@ -361,7 +372,7 @@ def fetch_condition():
     pm_id = json['pm_id']
     concept_id = json['concept_id']
     if (pm_id and concept_id and request.method == 'POST'):
-
+    
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
         Pointer.execute("select * from articles where (pm_id = '" +
@@ -370,6 +381,7 @@ def fetch_condition():
 
         response = jsonify(records)
         response.status_code = 200
+        response.headers.add('Access-Control-Allow-Origin', '*')
         return response #return all the rows (start , end)
     else:
         return "err"
@@ -381,7 +393,7 @@ def fetch_procedures():
     pm_id = json['pm_id']
     concept_id = json['concept_id']
     if (pm_id and concept_id and request.method == 'POST'):
-
+    
         connection =MySql.connect()
         Pointer = connection.cursor(pymysql.cursors.DictCursor)
         Pointer.execute("SELECT * from articles where (pm_id = "+str(pm_id)+") and (concept_id = " + str(concept_id) + ");")
@@ -389,6 +401,7 @@ def fetch_procedures():
 
         response = jsonify(records)
         response.status_code = 200
+        response.headers.add('Access-Control-Allow-Origin', '*')
         return response #return all the rows (start , end)
     else:
         return "err"
@@ -438,6 +451,7 @@ def display_about():
 
 
 @app.route('/get_plots_data', methods=['POST', 'GET'])
+@cross_origin()
 def display_plots_get():
     if request.method == "POST":
         # print(request.get_json())
@@ -471,12 +485,14 @@ def display_plots_get():
         # print(results)
         response = jsonify(results)
         # print(response)
+        response.headers.add('Access-Control-Allow-Origin', '*')
         return response
     if request.method == "GET":
         results = {'processed': 'GET is not supported'}
         return jsonify(results)
     
 @app.route('/get_data',methods=['POST','GET']) 
+@cross_origin()
 def display_get():
     if request.method == "POST":
         # print(request.get_json())
@@ -628,6 +644,7 @@ def display_get():
             results = []   
             
         response = jsonify(results)
+        response.headers.add('Access-Control-Allow-Origin', '*')
         return response
     if request.method == "GET":
         results = {'processed': 'GET is not supported'}
