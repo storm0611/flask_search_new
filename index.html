@@ -216,8 +216,11 @@
     <div class="modal-header">
       <h2>Frequency Plots</h2>
     </div>
-    <div class="modal-body" style="height: 500px">
-      <div id="chartContainer" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
+    <div class="modal-body" style="height: 600px">
+      <div class="row">
+        <div class="col-md-6" id="chartContainer_drug" style="height: 600px"></div>
+        <div class="col-md-6" id="chartContainer_condition" style="height: 600px"></div>
+      </div>
     </div>
     <div class="modal-footer">
       <h3></h3>
@@ -231,6 +234,7 @@
       var SERVER_URL = 'http://localhost:5000';
       //var SERVER_URL = 'http://tandem7.pythonanywhere.com';
       var res = {}
+      var res_plots_data = {}
       get_study_design()
       get_data_type()
       //get_drug_categories()
@@ -265,183 +269,9 @@
           placeholder: "Select Study Design",
           });
       }
-      
-
-      async function get_drug_categories(){
-       
-       var response =  await fetch(SERVER_URL + "/get_drug_categories", {
-         headers: {
-           "Content-Type": "application/json",
-         },
-         method: "POST",
-         
-       });
-       
-       var data = await response.json();
-
-       myOptions = []
-       data.forEach(elem =>{
-         myOptions.push({
-          value:elem,
-          label:elem});
-       });
-         VirtualSelect.init({
-         ele: '.example-drug_category-select',
-         options: myOptions,
-         multiple:true,
-         showValueAsTags: true,
-         searchPlaceholderText:"Search any Drug category...",
-         placeholder:"Select Drug category"
-         });
-     }
         
 
-      async function get_condition_categories(){
-       
-       var response =  await fetch(SERVER_URL + "/get_condition_categories", {
-         headers: {
-           "Content-Type": "application/json",
-         },
-         method: "POST",
-         
-       });
-       
-       var data = await response.json();
-
-       myOptions = []
-       data.forEach(elem =>{
-         myOptions.push({
-          value:elem,
-          label:elem
-        });
-       });
-         VirtualSelect.init({
-         ele: '.example-condition_category-select',
-         options: myOptions,
-         multiple:true,
-         showValueAsTags: true,
-         searchPlaceholderText:"Search any Condition category...",
-         placeholder:"Select Condition category"
-         });
-     }
-        
-      async function get_data_type(){
-       
-       var response =  await fetch(SERVER_URL + "/get_data_type", {
-         headers: {
-           "Content-Type": "application/json",
-         },
-         method: "POST",
-         
-       });
-       
-       var data = await response.json();
-
-       myOptions = []
-       data.forEach(elem =>{
-         myOptions.push({
-          value:elem,
-          label:elem
-        });
-       });
-         VirtualSelect.init({
-         ele: '.example-data-type-select',
-         options: myOptions,
-         multiple:true,
-         showValueAsTags: true,
-         searchPlaceholderText:"Search any Data Type...",
-         placeholder:"Select Data Type"
-         });
-     }
-     
-     async function get_study_design(){
-       
-        var response =  await fetch(SERVER_URL + "/get_study_design", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-        });
-        
-        var data = await response.json();
-
-        myOptions = []
-        data.forEach(elem =>{
-          myOptions.push({
-            value:elem,
-            label:elem
-          });
-        });
-          VirtualSelect.init({
-          ele: '.example-study-design-select',
-          options: myOptions,
-          multiple:true,
-          showValueAsTags: true,
-          searchPlaceholderText: "Search any Study Design...",
-          placeholder: "Select Study Design"
-          });
-      }
-      
-
-      async function get_drug_categories(){
-       
-       var response =  await fetch(SERVER_URL + "/get_drug_categories", {
-         headers: {
-           "Content-Type": "application/json",
-         },
-         method: "POST",
-         
-       });
-       
-       var data = await response.json();
-
-       myOptions = []
-       data.forEach(elem =>{
-         myOptions.push({
-          value:elem,
-          label:elem});
-       });
-         VirtualSelect.init({
-         ele: '.example-drug_category-select',
-         options: myOptions,
-         multiple:true,
-         showValueAsTags: true,
-         searchPlaceholderText:"Search any Drug category...",
-         placeholder:"Select Drug category"
-         });
-     }
-        
-
-      async function get_condition_categories(){
-       
-       var response =  await fetch(SERVER_URL + "/get_condition_categories", {
-         headers: {
-           "Content-Type": "application/json",
-         },
-         method: "POST",
-         
-       });
-       
-       var data = await response.json();
-
-       myOptions = []
-       data.forEach(elem =>{
-         myOptions.push({
-          value:elem,
-          label:elem
-        });
-       });
-         VirtualSelect.init({
-         ele: '.example-condition_category-select',
-         options: myOptions,
-         multiple:true,
-         showValueAsTags: true,
-         searchPlaceholderText:"Search any Condition category...",
-         placeholder:"Select Condition category"
-         });
-     }
-        
-      async function get_data_type(){
+  async function get_data_type(){
        
        var response =  await fetch(SERVER_URL + "/get_data_type", {
          headers: {
@@ -518,6 +348,52 @@
                 } else {
                     msg = "Error:" + xhr.status + " " + xhr.responseText;
                 }
+                console.log(msg)
+            }
+        }); 
+      }
+      
+      function get_plots_data() {
+        $.ajax(SERVER_URL + '/get_plots_data', {
+            type: "POST",
+            data: JSON.stringify({
+              'articles_id': res[res.length - 1]['articles_id']
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+            beforeSend: function() {
+            // setting a timeout
+              //document.getElementsByClassName('preload')[0].style.display = "block"
+            },
+            success: function (data) {
+              res_plots_data = data
+              //console.log(Object.keys(res_plots_data).length)
+              if (Object.keys(res_plots_data).length){
+                display_plots()
+              }
+              else{
+
+              }
+            },
+            error: function (xhr, exception) {
+                var msg = "";
+                if (xhr.status === 0) {
+                    msg = "Not connect.\n Verify Network." + xhr.responseText;
+                } else if (xhr.status == 404) {
+                    msg = "Requested page not found. [404]" + xhr.responseText;
+                } else if (xhr.status == 500) {
+                    msg = "Internal Server Error [500]." +  xhr.responseText;
+                } else if (exception === "parsererror") {
+                    msg = "Requested JSON parse failed.";
+                } else if (exception === "timeout") {
+                    msg = "Time out error." + xhr.responseText;
+                } else if (exception === "abort") {
+                    msg = "Ajax request aborted.";
+                } else {
+                    msg = "Error:" + xhr.status + " " + xhr.responseText;
+                }
+                console.log(msg)
             }
         }); 
       }
@@ -539,22 +415,6 @@
         
         //display_data(filter_data_type(this.value))
       });
-      /*
-      $('.example-drug_category-select').change(function() {
-        flt_data['flt_dc'] = this.value;
-        console.log(flt_data)
-        get_data()
-        //display_data(filter_data_type(this.value))
-      });
-
-      
-      $('.example-condition_category-select').change(function() {
-        flt_data['flt_cc'] = this.value;
-        console.log(flt_data)
-        get_data()
-        //display_data(filter_data_type(this.value))
-      });
-      */
 
       $('input[name="select2"]').amsifySuggestags({
 					suggestions: ['anemia', 'tacrolimus', 'female', 'male', 'neutropenia',
@@ -614,6 +474,7 @@
         0: "Load less",
         3: "Load more"
       }
+
       $('#loadbtn').click(function(){
         if (res.length) {
           flt_data['flt_limit'] = 3 - flt_data['flt_limit']
@@ -708,44 +569,99 @@ var span = document.getElementsByClassName("close");
 
 // When the user clicks the button, open the modal 
 btn.onclick = function() {
-  var condition_frequency = (res[res.length - 1]['n_mesh_contition'] * 100 / (res.length - 1)).toString().split('.')[0]
-  var drug_frequency = (res[res.length - 1]['n_mesh_drug'] * 100 / (res.length - 1)).toString().split('.')[0]
+  get_plots_data()
+}
+
+function display_plots () {
+  console.log(res_plots_data)
+  var dataPoints_drug = [{
+    x: Object.keys(res_plots_data['n_drug']).length, y: 100, label: "number of searched resutls", indexLabel: res.length.toString()
+  }]
+  var dataPoints_condition = [{
+    x: Object.keys(res_plots_data['n_condition']).length, y: 100, label: "number of searched resutls", indexLabel: res.length.toString()
+  }]
+  for (i = 0; i < Object.keys(res_plots_data['n_drug']).length; i++ ){
+    dataPoints_drug.push({
+      x: i,
+      y: parseInt((res_plots_data['n_drug'][Object.keys(res_plots_data['n_drug'])[i]] * 100 / res.length).toString().split('.')[0]), 
+      label: Object.keys(res_plots_data['n_drug'])[i],
+      indexLabel: (res_plots_data['n_drug'][Object.keys(res_plots_data['n_drug'])[i]]).toString()
+    });
+  }
+  //console.log(dataPoints_drug)
+  for (i = 0; i < Object.keys(res_plots_data['n_condition']).length; i++ ){
+    dataPoints_condition.push({
+      x: i,
+      y: parseInt((res_plots_data['n_condition'][Object.keys(res_plots_data['n_condition'])[i]] * 100 / res.length).toString().split('.')[0]), 
+      label: Object.keys(res_plots_data['n_condition'])[i],
+      indexLabel: (res_plots_data['n_condition'][Object.keys(res_plots_data['n_condition'])[i]]).toString()
+    });
+  }
+  //console.log(dataPoints_condition)
   var options = {
-	animationEnabled: true,
-	title: {
-		text: "Condition and Drug Frequency",                
-		fontColor: "Peru"
-	},	
-	axisY: {
-		tickThickness: 0,
-		lineThickness: 0,
-		valueFormatString: " ",
-		gridThickness: 0                    
-	},
-	axisX: {
-		tickThickness: 0,
-		lineThickness: 0,
-		labelFontSize: 18,
-		labelFontColor: "Peru"				
-	},
-	data: [{
-		indexLabelFontSize: 26,
-		toolTipContent: "<span style=\"color:#62C9C3\">{indexLabel}:</span> <span style=\"color:#CD853F\"><strong>{y}</strong></span>",
-		indexLabelPlacement: "inside",
-		indexLabelFontColor: "purple",
-		indexLabelFontWeight: 600,
-		indexLabelFontFamily: "Verdana",
-		color: "#62C9C3",
-		type: "bar",
-		dataPoints: [
-			{ y: parseInt(condition_frequency), label: condition_frequency + "%", indexLabel: "Condition" },
-			{ y: parseInt(drug_frequency), label: drug_frequency + "%", indexLabel: "Drug" },
-			{ y: 100, label: "100%", indexLabel: "" }
-		]
-	}]
-};
-$("#chartContainer").CanvasJSChart(options);
-  modal.style.display = "block";
+                  animationEnabled: true,
+                  title: {
+                    text: "Drug Frequency",                
+                    fontColor: "Peru"
+                  },	
+                  axisY: {
+                    tickThickness: 0,
+                    lineThickness: 0,
+                    valueFormatString: " ",
+                    gridThickness: 0                    
+                  },
+                  axisX: {
+                    tickThickness: 0,
+                    lineThickness: 0,
+                    labelFontSize: 18,
+                    labelFontColor: "Peru"				
+                  },
+                  data: [{
+                    indexLabelFontSize: 18,
+                    toolTipContent: "<span style=\"color:#62C9C3\">{indexLabel}:</span> <span style=\"color:#CD853F\"><strong>{y}</strong></span>",
+                    indexLabelPlacement: "inside",
+                    indexLabelFontColor: "purple",
+                    indexLabelFontWeight: 600,
+                    indexLabelFontFamily: "Verdana",
+                    color: "#62C9C3",
+                    type: "bar",
+                    dataPoints: dataPoints_drug
+                    }]
+                  };
+                  $("#chartContainer_drug").CanvasJSChart(options);
+  options = {
+                  animationEnabled: true,
+                  title: {
+                    text: "Condition Frequency",                
+                    fontColor: "Peru"
+                  },	
+                  axisY: {
+                    tickThickness: 0,
+                    lineThickness: 0,
+                    valueFormatString: " ",
+                    gridThickness: 0                    
+                  },
+                  axisX: {
+                    tickThickness: 0,
+                    lineThickness: 0,
+                    labelFontSize: 18,
+                    labelFontColor: "Peru"				
+                  },
+                  data: [{
+                    indexLabelFontSize: 18,
+                    toolTipContent: "<span style=\"color:#62C9C3\">{indexLabel}:</span> <span style=\"color:#CD853F\"><strong>{y}</strong></span>",
+                    indexLabelPlacement: "inside",
+                    indexLabelFontColor: "purple",
+                    indexLabelFontWeight: 600,
+                    indexLabelFontFamily: "Verdana",
+                    color: "#62C9C3",
+                    type: "bar",
+                    dataPoints: dataPoints_condition
+                    }]
+                  };
+                  $("#chartContainer_condition").CanvasJSChart(options);
+                  modal.style.display = "block";
+                  
 }
 
 // When the user clicks on <span> (x), close the modal

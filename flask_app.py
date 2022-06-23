@@ -9,7 +9,7 @@ from flask_restful import reqparse, Api, Resource , request
 from flaskext.mysql import MySQL
 from flask_cors import CORS, cross_origin
 from flask import Flask, jsonify, render_template, request, send_file, make_response, abort, session
-from numpy import int64, ndarray, true_divide
+from numpy import int64, ndarray, result_type, true_divide
 # from plots_code import barchart_diseases
 import pymysql
 from pymysql import Error
@@ -436,6 +436,46 @@ def display_about():
     # return render_template('index.html')
     return "This is a About us page"
 
+
+@app.route('/get_plots_data', methods=['POST', 'GET'])
+def display_plots_get():
+    if request.method == "POST":
+        # print(request.get_json())
+        a_id = request.get_json()['articles_id']
+        # print(a_id)
+        sql_query = "select mesh, domain from mesh inner join (select * from meshes_connect where article_id in (" + a_id + ")) as mh on mh.mesh_id=mesh.id;"
+        Pointer.execute(sql_query)
+        res = Pointer.fetchall()
+        # print(res)
+        n_drug = {}
+        n_condition = {}
+        results = []
+        if len(res):
+            for i in res:
+                if i[1] == 'Drug':
+                    try:
+                        n_drug[i[0]] += 1
+                    except:
+                        n_drug[i[0]] = 1
+                else:
+                    if i[1] == 'Condition':
+                        try:
+                            n_condition[i[0]] += 1
+                        except:
+                            n_condition[i[0]] = 1
+            
+            results = {
+                'n_drug' : n_drug,
+                'n_condition' : n_condition
+            }
+        # print(results)
+        response = jsonify(results)
+        # print(response)
+        return response
+    if request.method == "GET":
+        results = {'processed': 'GET is not supported'}
+        return jsonify(results)
+    
 @app.route('/get_data',methods=['POST','GET']) 
 def display_get():
     if request.method == "POST":
@@ -454,38 +494,6 @@ def display_get():
         cnt = Pointer.fetchall()[0][0]       
         sign = np.zeros(cnt + 1)
         
-        i = 0
-        sql_query = ""
-        for i in range(len(flt_sd)):
-            if i > 0:
-                sql_query += ", "
-            else:
-                sql_query += "select article_id from study_design_connect inner join (select id as sd_id from study_design where study_design in ("
-            sql_query += ("'" + flt_sd[i] + "'")
-        if sql_query != "":
-            sql_query += ")) as sd on sd.sd_id=study_design_connect.study_design_id;"
-            Pointer.execute(sql_query)
-            res_sd = Pointer.fetchall()
-            for j in res_sd:
-                sign[j[0]] += 1        
-        i = 0
-        sql_query = ""
-        for i in range(len(flt_dt)):
-            if i > 0:
-                sql_query += ", "
-            else:
-                sql_query += "select article_id from data_type_connect inner join (select id as dt_id from data_type where data_type in ("
-            sql_query += ("'" + flt_dt[i] + "'")
-        if sql_query != "":
-            sql_query += ")) as dt on dt.dt_id=data_type_connect.data_type_id"
-            Pointer.execute(sql_query)
-            res_dt = Pointer.fetchall()
-            for j in res_dt:
-                if sign[j[0]] == 1:
-                    sign[j[0]] += 1
-                else:
-                    sign[j[0]] = 0
-             
         i = 0   
         sql_query = ""
         for i in range(len(flt_mesh)):
@@ -499,16 +507,47 @@ def display_get():
             Pointer.execute(sql_query)
             res_mh = Pointer.fetchall()
             for j in res_mh:
-                if sign[j[0]] == 2:
+                sign[j[0]] += 1        
+        
+        i = 0
+        sql_query = ""
+        for i in range(len(flt_sd)):
+            if i > 0:
+                sql_query += ", "
+            else:
+                sql_query += "select article_id from study_design_connect inner join (select id as sd_id from study_design where study_design in ("
+            sql_query += ("'" + flt_sd[i] + "'")
+        if sql_query != "":
+            sql_query += ")) as sd on sd.sd_id=study_design_connect.study_design_id;"
+            Pointer.execute(sql_query)
+            res_sd = Pointer.fetchall()
+            for j in res_sd:
+                # if sign[j[0]] == 1:
                     sign[j[0]] += 1
-                else:
-                    sign[j[0]] = 0
-                    
+                # else:
+                #     sign[j[0]] = 0
+        i = 0
+        sql_query = ""
+        for i in range(len(flt_dt)):
+            if i > 0:
+                sql_query += ", "
+            else:
+                sql_query += "select article_id from data_type_connect inner join (select id as dt_id from data_type where data_type in ("
+            sql_query += ("'" + flt_dt[i] + "'")
+        if sql_query != "":
+            sql_query += ")) as dt on dt.dt_id=data_type_connect.data_type_id"
+            Pointer.execute(sql_query)
+            res_dt = Pointer.fetchall()
+            for j in res_dt:
+            #     if sign[j[0]] == 2:
+                    sign[j[0]] += 1
+                # else:
+                #     sign[j[0]] = 0
 
         if max(sign):
             results = []
             res_id = ", ".join([str(i) for i in np.where(sign == max(sign))[0]])
-            print(max(sign))
+            print('max(sign):', max(sign))
             # print(np.where(sign == max(sign))[0])
             sql_query = "select journal, a_id from journals inner join (select id as a_id, journal_id from articles where id in (" + res_id + ")) as jo on jo.journal_id=journals.id order by ranking asc"
             Pointer.execute(sql_query)
@@ -582,6 +621,9 @@ def display_get():
                     'domain': res_domain,
                     'journal': res_journal
                 })
+            results.append({
+                'articles_id': res_id    
+            })
         else:
             results = []   
             
