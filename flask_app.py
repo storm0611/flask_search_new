@@ -70,7 +70,7 @@ def add_article():
     #get data from the Client side through API and put data to the database
     json_data = request.get_json(force=True)
     print(json_data)
-    #print(json)
+#     json_data = request.get_json()
     pm_id = int64(json_data['pm_id'])
     pm_link = json_data['pm_link']
     date_pub = json_data['date_pub']
@@ -119,12 +119,13 @@ def add_article():
                               ", " + str(concept_id), ', domain', ", '" + domain_id + "'",)
         insert_data_connect(
             'meshes_connect', str(article_id), str(mesh_id))
-        connection.commit()
         response = jsonify('Article Added!')
         response.status_code = 200 #if data addedd successfully: response 200
         return response
     else:
-        return "err" # if error: response 500
+        # if error: response 500
+        response = jsonify('err')
+        return response
 
 
 @app.route('/fetch',methods=['POST'])  #Method to fetch / search data from the database

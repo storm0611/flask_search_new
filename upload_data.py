@@ -29,8 +29,9 @@ def read_csv_data():
 
 def upload_data():
         csv_data = read_csv_data()
-        
+       
         for i in range(len(csv_data)):
+
             # data = {}    
         
             # data['journal'] = re.split("\'|\"", csv_data['journal'][i])[1]
