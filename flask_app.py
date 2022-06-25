@@ -208,6 +208,118 @@ def get_data_type():
         return "err"
 
 
+@app.route('/get_date_pub', methods=['POST'])
+def get_date_pub():
+    if (request.method == 'POST'):
+
+        connection =MySql.connect()
+        Pointer = connection.cursor()
+        Pointer.execute("SELECT distinct date_pub FROM articles ORDER BY date_pub ASC")
+        records = Pointer.fetchall()
+
+        response = jsonify(records)
+        response.status_code = 200
+        return response #return all the rows (start , end)
+    else:
+        return "err"
+    
+
+@app.route('/get_geography', methods=['POST'])
+def get_geography():
+    if (request.method == 'POST'):
+
+        connection = MySql.connect()
+        Pointer = connection.cursor()
+        Pointer.execute("SELECT distinct country FROM geography")
+        records = Pointer.fetchall()
+
+        response = jsonify(records)
+        response.status_code = 200
+        return response  # return all the rows (start , end)
+    else:
+        return "err"
+
+
+@app.route('/get_vocabulary', methods=['POST'])
+def get_vocabulary():
+    if (request.method == 'POST'):
+
+        connection = MySql.connect()
+        Pointer = connection.cursor()
+        Pointer.execute("SELECT distinct omop_vocab FROM vocabularies")
+        records = Pointer.fetchall()
+
+        response = jsonify(records)
+        response.status_code = 200
+        return response  # return all the rows (start , end)
+    else:
+        return "err"
+
+
+@app.route('/get_journal', methods=['POST'])
+def get_journal():
+    if (request.method == 'POST'):
+
+        connection = MySql.connect()
+        Pointer = connection.cursor()
+        Pointer.execute("SELECT distinct journal FROM journals")
+        records = Pointer.fetchall()
+
+        response = jsonify(records)
+        response.status_code = 200
+        return response  # return all the rows (start , end)
+    else:
+        return "err"
+
+
+@app.route('/get_domain', methods=['POST'])
+def get_domain():
+    if (request.method == 'POST'):
+
+        connection = MySql.connect()
+        Pointer = connection.cursor()
+        Pointer.execute("SELECT distinct domain FROM mesh")
+        records = Pointer.fetchall()
+
+        response = jsonify(records)
+        response.status_code = 200
+        return response  # return all the rows (start , end)
+    else:
+        return "err"
+
+
+@app.route('/get_mesh_sug', methods=['POST'])
+def get_mesh_sug():
+    if (request.method == 'POST'):
+
+        connection = MySql.connect()
+        Pointer = connection.cursor()
+        Pointer.execute("SELECT distinct mesh FROM mesh")
+        records = Pointer.fetchall()
+
+        response = jsonify(records)
+        response.status_code = 200
+        return response  # return all the rows (start , end)
+    else:
+        return "err"
+
+
+@app.route('/get_con_sug', methods=['POST'])
+def get_con_sug():
+    if (request.method == 'POST'):
+
+        connection = MySql.connect()
+        Pointer = connection.cursor()
+        Pointer.execute("SELECT distinct concept_id FROM mesh")
+        records = Pointer.fetchall()
+
+        response = jsonify(records)
+        response.status_code = 200
+        return response  # return all the rows (start , end)
+    else:
+        return "err"
+
+
 @app.route('/fetch_by_tags',methods=['POST'])  #method to fetch / search data from database
 def fetch_by_tags_article():
     json = request.json
@@ -482,8 +594,16 @@ def display_get():
     if request.method == "POST":
         # print(request.get_json())
         flt_mesh = request.get_json()['flt_mesh'].split(',')
+        print(flt_mesh)
+        # flt_co = request.get_json()['flt_co']
         flt_sd = request.get_json()['flt_sd']
         flt_dt = request.get_json()['flt_dt']
+        flt_date = request.get_json()['flt_date']
+        flt_geo = request.get_json()['flt_geo']
+        flt_vb = request.get_json()['flt_vb']
+        flt_jo = request.get_json()['flt_jo']
+        flt_dm = request.get_json()['flt_dm']
+        flt_so = request.get_json()['flt_so']
         # print(flt_mesh)
         # print(flt_sd)
         # print(flt_dt)
@@ -498,17 +618,55 @@ def display_get():
         i = 0   
         sql_query = ""
         for i in range(len(flt_mesh)):
+            try:
+                flt_co = int64(flt_mesh[i])
+                whe = 'concept_id'
+                val = flt_mesh[i]
+            except:
+                whe = 'mesh'
+                val = "'" + flt_mesh[i] + "'"
             if i > 0:
                 sql_query += ", "
             else:
-                sql_query += "select article_id from meshes_connect inner join (select id as mh_id from mesh where mesh in ("
-            sql_query += ("'" + flt_mesh[i] + "'")
+                sql_query += "select article_id from meshes_connect inner join (select id as mh_id from mesh where " + whe + " in ("
+            sql_query += (val)
         if sql_query != "":
             sql_query += ")) as mh on mh.mh_id=meshes_connect.mesh_id"
             Pointer.execute(sql_query)
             res_mh = Pointer.fetchall()
             for j in res_mh:
-                sign[j[0]] += 1        
+                sign[j[0]] += 1 
+                
+        i = 0   
+        sql_query = ""
+        for i in range(len(flt_dm)):
+            if i > 0:
+                sql_query += ", "
+            else:
+                sql_query += "select article_id from meshes_connect inner join (select id as mh_id from mesh where domain in ("
+            sql_query += ("'" + flt_dm[i] + "'")
+        if sql_query != "":
+            sql_query += ")) as mh on mh.mh_id=meshes_connect.mesh_id"
+            Pointer.execute(sql_query)
+            res_dm = Pointer.fetchall()
+            for j in res_dm:
+                sign[j[0]] += 1 
+                
+        
+        # i = 0
+        # sql_query = ""
+        # for i in range(len(flt_co)):
+        #     if i > 0:
+        #         sql_query += ", "
+        #     else:
+        #         sql_query += "select article_id from meshes_connect inner join (select id as mh_id from mesh where concept_id in ("
+        #     sql_query += (str(flt_co[i]))
+        # if sql_query != "":
+        #     sql_query += ")) as mh on mh.mh_id=meshes_connect.mesh_id"
+        #     Pointer.execute(sql_query)
+        #     res_co = Pointer.fetchall()
+        #     for j in res_co:
+        #         sign[j[0]] += 1
         
         i = 0
         sql_query = ""
@@ -544,13 +702,92 @@ def display_get():
                     sign[j[0]] += 1
                 # else:
                 #     sign[j[0]] = 0
+                
+        i = 0
+        sql_query = ""
+        for i in range(len(flt_date)):
+            if i > 0:
+                sql_query += ", "
+            else:
+                sql_query += "select id from articles where date_pub in ("
+            sql_query += ("'" + flt_date[i] + "'")
+        if sql_query != "":
+            sql_query += ")"
+            Pointer.execute(sql_query)
+            res_date = Pointer.fetchall()
+            for j in res_date:
+                sign[j[0]] += 1
+
+        i = 0
+        sql_query = ""
+        for i in range(len(flt_geo)):
+            if i > 0:
+                sql_query += ", "
+            else:
+                sql_query += "select article_id from geography_connect inner join (select id as dt_id from geography where country in ("
+            sql_query += ("'" + flt_geo[i] + "'")
+        if sql_query != "":
+            sql_query += ")) as dt on dt.dt_id=geography_connect.region_id"
+            Pointer.execute(sql_query)
+            res_geo = Pointer.fetchall()
+            for j in res_geo:
+                #     if sign[j[0]] == 2:
+                sign[j[0]] += 1
+                # else:
+                #     sign[j[0]] = 0
+        
+        i = 0
+        sql_query = ""
+        for i in range(len(flt_vb)):
+            if i > 0:
+                sql_query += ", "
+            else:
+                sql_query += "select article_id from vocabs_connect inner join (select id as dt_id from vocabularies where omop_vocab in ("
+            sql_query += ("'" + flt_vb[i] + "'")
+        if sql_query != "":
+            sql_query += ")) as dt on dt.dt_id=vocabs_connect.vocab_id"
+            Pointer.execute(sql_query)
+            res_vb = Pointer.fetchall()
+            for j in res_vb:
+                #     if sign[j[0]] == 2:
+                sign[j[0]] += 1
+                # else:
+                #     sign[j[0]] = 0
+        
+        i = 0
+        sql_query = ""
+        for i in range(len(flt_jo)):
+            if i > 0:
+                sql_query += ", "
+            else:
+                sql_query += "select id from articles inner join (select id as dt_id from journals where journal in ("
+            sql_query += ("'" + flt_jo[i] + "'")
+        if sql_query != "":
+            sql_query += ")) as dt on dt.dt_id=articles.journal_id"
+            Pointer.execute(sql_query)
+            # print(sql_query)
+            res_jo = Pointer.fetchall()
+            for j in res_jo:
+                #     if sign[j[0]] == 2:
+                sign[j[0]] += 1
+                # else:
+                #     sign[j[0]] = 0
 
         if max(sign):
             results = []
             res_id = ", ".join([str(i) for i in np.where(sign == max(sign))[0]])
             print('max(sign):', max(sign))
             # print(np.where(sign == max(sign))[0])
-            sql_query = "select journal, a_id from journals inner join (select id as a_id, journal_id from articles where id in (" + res_id + ")) as jo on jo.journal_id=journals.id order by ranking asc"
+            try:
+                sort = flt_so[0].split(' ')
+                if sort[0] == 'date_pub':
+                    sql_query = "select journal, articles.id from articles inner join journals on articles.journal_id = journals.id where articles.id in (" + res_id + ") ORDER BY " + sort
+                else:
+                    sql_query = "select journal, a_id from journals inner join (select id as a_id, journal_id from articles where id in (" + \
+                            res_id + ")) as jo on jo.journal_id=journals.id order by ranking " + sort[1]
+            except:
+                sql_query = "select journal, a_id from journals inner join (select id as a_id, journal_id from articles where id in (" + \
+                            res_id + ")) as jo on jo.journal_id=journals.id order by ranking asc"
             Pointer.execute(sql_query)
             res_journal_a_id = Pointer.fetchall()
             for j in res_journal_a_id:

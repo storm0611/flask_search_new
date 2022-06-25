@@ -183,10 +183,19 @@
         
         <div class="example-study-design-select"></div>
         <div class="example-data-type-select"></div>
-        <!--<div class="example-drug_category-select"></div>
+        <div class="example-date-select"></div>
+        <div class="example-geography-select"></div>
+        <div class="example-vacabulary-select"></div>
+        <div class="example-journal-select"></div>
+        <div class="example-domain-select"></div>
+        <div class="example-sort-select"></div>
+       <!-- <div class="example-mesh-select"></div>
+        <div class="example-concept-select"></div>
+        <div class="example-drug_category-select"></div>
         <div class="example-condition_category-select"></div>!-->
-        <input type="text"class="select2" name="select2" value="439777">
-        
+        <!--<input type="text"class="select2" name="select1" value="439777" placeholder="Type here Concept ID...">-->
+        <input type="text"class="select2" name="select2" value="anemia" placeholder="Type here Concept ID / Name...">
+
       </div>
       
       <div class="results-label">
@@ -235,8 +244,34 @@
       //var SERVER_URL = 'http://tandem7.pythonanywhere.com';
       var res = {}
       var res_plots_data = {}
+      
+      var mesh_sug = []
+     var con_sug = []
+
+     flt_data = {
+        'flt_mesh': [],
+        //'flt_co': [],
+        'flt_sd': [],
+        'flt_dt': [],
+        'flt_date': [],
+        'flt_geo': [],
+        'flt_vb': [],
+        'flt_jo': [],
+        'flt_dm': [],
+        'flt_so': [],
+        'flt_limit': 3
+      };
+
       get_study_design()
+      get_date_pub()
       get_data_type()
+      get_geography()
+      get_vocabulary()
+      get_journal()
+      get_domain()
+      get_sort()
+      get_mesh_sug()
+      get_con_sug()
       //get_drug_categories()
       //get_condition_categories()
 
@@ -267,6 +302,36 @@
           showValueAsTags: true,
           searchPlaceholderText: "Search any Study Design...",
           placeholder: "Select Study Design",
+          });
+      
+        }
+
+      async function get_date_pub(){
+       
+        var response =  await fetch(SERVER_URL + "/get_date_pub", 
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        });
+        
+        var data = await response.json();
+
+        myOptions = []
+        data.forEach(elem =>{
+          myOptions.push({
+            value:elem,
+            label:elem
+          });
+        });
+          VirtualSelect.init({
+          ele: '.example-date-select',
+          options: myOptions,
+          multiple:true,
+          showValueAsTags: true,
+          searchPlaceholderText: "Search any Date...",
+          placeholder: "Select Date",
           });
       }
         
@@ -300,12 +365,205 @@
          });
      }
 
-     flt_data = {
-        'flt_mesh': [],
-        'flt_sd': [],
-        'flt_dt': [],
-        'flt_limit': 3
-      };
+     async function get_geography(){
+       
+       var response =  await fetch(SERVER_URL + "/get_geography", {
+         headers: {
+           "Content-Type": "application/json",
+         },
+         method: "POST",
+         
+       });
+       
+       var data = await response.json();
+
+       myOptions = []
+       data.forEach(elem =>{
+         myOptions.push({
+          value:elem,
+          label:elem
+        });
+       });
+         VirtualSelect.init({
+         ele: '.example-geography-select',
+         options: myOptions,
+         multiple:true,
+         showValueAsTags: true,
+         searchPlaceholderText:"Search any Geography...",
+         placeholder:"Select Geography"
+         });
+     }
+
+     async function get_vocabulary(){
+       
+       var response =  await fetch(SERVER_URL + "/get_vocabulary", {
+         headers: {
+           "Content-Type": "application/json",
+         },
+         method: "POST",
+         
+       });
+       
+       var data = await response.json();
+
+       myOptions = []
+       data.forEach(elem =>{
+         myOptions.push({
+          value:elem,
+          label:elem
+        });
+       });
+         VirtualSelect.init({
+         ele: '.example-vacabulary-select',
+         options: myOptions,
+         multiple:true,
+         showValueAsTags: true,
+         searchPlaceholderText:"Search any Vocabulary...",
+         placeholder:"Select Vocabulary"
+         });
+     }
+
+     async function get_journal(){
+       
+       var response =  await fetch(SERVER_URL + "/get_journal", {
+         headers: {
+           "Content-Type": "application/json",
+         },
+         method: "POST",
+         
+       });
+       
+       var data = await response.json();
+
+       myOptions = []
+       data.forEach(elem =>{
+         myOptions.push({
+          value:elem,
+          label:elem
+        });
+       });
+         VirtualSelect.init({
+         ele: '.example-journal-select',
+         options: myOptions,
+         multiple:true,
+         showValueAsTags: true,
+         searchPlaceholderText:"Search any Journal...",
+         placeholder:"Select Journal"
+         });
+     }
+
+     async function get_domain(){
+       
+       var response =  await fetch(SERVER_URL + "/get_domain", {
+         headers: {
+           "Content-Type": "application/json",
+         },
+         method: "POST",
+         
+       });
+       
+       var data = await response.json();
+
+       myOptions = []
+       data.forEach(elem =>{
+         myOptions.push({
+          value:elem,
+          label:elem
+        });
+       });
+         VirtualSelect.init({
+         ele: '.example-domain-select',
+         options: myOptions,
+         multiple:true,
+         showValueAsTags: true,
+         searchPlaceholderText:"Search any Domain...",
+         placeholder:"Select Domain"
+         });
+     }
+
+
+     
+     async function get_sort(){
+       
+      VirtualSelect.init({
+           ele: '.example-sort-select',
+           options: [
+           {
+              value: 'journal ASC',
+              label: 'journal ASC'
+           }, 
+           {
+              value: 'journal DESC',
+              label: 'journal DESC'
+           },
+           {
+              value: 'date_pub ASC',
+              label: 'date_pub ASC'
+           }, 
+           {
+              value: 'date_pub DESC',
+              label: 'date_pub DESC'
+           }],
+         multiple:true,
+         showValueAsTags: true,
+         searchPlaceholderText:"Search any Sort Order...",
+         placeholder:"Select Sort Order"
+         });
+     }
+
+     async function get_mesh_sug(){
+       
+       var response =  await fetch(SERVER_URL + "/get_mesh_sug", {
+         headers: {
+           "Content-Type": "application/json",
+         },
+         method: "POST",
+         
+       });
+       
+       var data = await response.json();
+       myOptions = []
+       for (i = 0; i < data.length; i++){
+        mesh_sug.push(data[i][0]);
+       }
+         VirtualSelect.init({
+         ele: '.example-mesh-select',
+         options: myOptions,
+         multiple:true,
+         showValueAsTags: true,
+         searchPlaceholderText:"Search any Mesh...",
+         placeholder:"Select Mesh"
+         });
+     }
+
+     async function get_con_sug(){
+       
+       var response =  await fetch(SERVER_URL + "/get_con_sug", {
+         headers: {
+           "Content-Type": "application/json",
+         },
+         method: "POST",
+         
+       });
+       
+       var data = await response.json();
+       myOptions = []
+       for (i = 0; i < data.length; i++){
+        mesh_sug.push(data[i][0]);
+       }
+       for (i = 0; i < mesh_sug.length; i++){
+         //console.log("'" + mesh_sug[i] + "'" + ",")
+       }
+         VirtualSelect.init({
+         ele: '.example-concept-select',
+         options: myOptions,
+         multiple:true,
+         showValueAsTags: true,
+         searchPlaceholderText:"Search any Concept ID...",
+         placeholder:"Select Concept ID"
+         });
+       
+     }
       
 
       function get_data() {
@@ -318,6 +576,8 @@
             beforeSend: function() {
             // setting a timeout
               document.getElementsByClassName('preload')[0].style.display = "block"
+              document.getElementsByClassName('cards-main')[0].innerHTML = ''
+
             },
             success: function (data) {
               res = data
@@ -349,6 +609,9 @@
                     msg = "Error:" + xhr.status + " " + xhr.responseText;
                 }
                 console.log(msg)
+                document.getElementsByClassName('preload')[0].style.display = "none"
+                $("#buttondrugs").attr("disabled", true);
+                $("#loadbtn").attr("disabled", true);
             }
         }); 
       }
@@ -416,21 +679,1143 @@
         //display_data(filter_data_type(this.value))
       });
 
+      $('.example-date-select').change(function() {
+        flt_data['flt_date'] = this.value;
+        console.log(flt_data)
+        get_data()
+        
+        //display_data(filter_data_type(this.value))
+      });
+
+      $('.example-geography-select').change(function() {
+        flt_data['flt_geo'] = this.value;
+        console.log(flt_data)
+        get_data()
+        
+        //display_data(filter_data_type(this.value))
+      });
+
+      $('.example-vacabulary-select').change(function() {
+        flt_data['flt_vb'] = this.value;
+        console.log(flt_data)
+        get_data()
+        
+        //display_data(filter_data_type(this.value))
+      });
+
+      $('.example-journal-select').change(function() {
+        flt_data['flt_jo'] = this.value;
+        console.log(flt_data)
+        get_data()
+        
+        //display_data(filter_data_type(this.value))
+      });
+
+      $('.example-domain-select').change(function() {
+        flt_data['flt_dm'] = this.value;
+        console.log(flt_data)
+        get_data()
+        
+        //display_data(filter_data_type(this.value))
+      });
+
+      $('.example-sort-select').change(function() {
+        flt_data['flt_so'] = this.value;
+        console.log(flt_data)
+        get_data()
+        
+        //display_data(filter_data_type(this.value))
+      });
+
+      $('.example-mesh-select').change(function() {
+        flt_data['flt_mesh'] = this.value;
+        console.log(flt_data)
+        get_data()
+        
+        //display_data(filter_data_type(this.value))
+      });
+
+      $('.example-concept-select').change(function() {
+        flt_data['flt_co'] = this.value;
+        console.log(flt_data)
+        get_data()
+        
+        //display_data(filter_data_type(this.value))
+      });
+
       $('input[name="select2"]').amsifySuggestags({
-					suggestions: ['anemia', 'tacrolimus', 'female', 'male', 'neutropenia',
-       'rituximab', 'thrombocytopenia', 'buprenorphine',
-       'opioid-related disorders', 'desogestrel', 'levonorgestrel',
-       'enoxaparin', 'bacteremia', 'chlorhexidine',
-       'burkholderia infections', 'cisplatin', 'aged', 'carcinoma',
-       'chemoradiotherapy', 'head and neck neoplasms', 'neoplasm staging',
-       'squamous cell carcinoma of head and neck', 'brain neoplasms',
-       'carmustine', 'combined modality therapy', 'radiosurgery',
-       'kidney neoplasms', 'sunitinib', 'staphylococcus aureus',
-       'carrier state', 'cross infection', 'infection control',
-       'staphylococcal infections', 'febrile neutropenia', 'filgrastim',
-       'pegfilgrastim', 'sargramostim', 'neoplasms', 'osteoporosis',
-       'osteoporotic fractures', 'teriparatide', 'macular edema',
-       'ranibizumab', 'retinal vein occlusion'],
+					suggestions: ['anemia',
+ 'tacrolimus',
+ 'female',
+ 'male',
+ 'neutropenia',
+ 'rituximab',
+ 'thrombocytopenia',
+ 'buprenorphine',
+ 'opioid-related disorders',
+ 'desogestrel',
+ 'levonorgestrel',
+ 'enoxaparin',
+ 'bacteremia',
+ 'chlorhexidine',
+ 'burkholderia infections',
+ 'cisplatin',
+ 'aged',
+ 'carcinoma',
+ 'chemoradiotherapy',
+ 'head and neck neoplasms',
+ 'neoplasm staging',
+ 'squamous cell carcinoma of head and neck',
+ 'brain neoplasms',
+ 'carmustine',
+ 'combined modality therapy',
+ 'radiosurgery',
+ 'kidney neoplasms',
+ 'sunitinib',
+ 'staphylococcus aureus',
+ 'carrier state',
+ 'cross infection',
+ 'infection control',
+ 'staphylococcal infections',
+ 'febrile neutropenia',
+ 'filgrastim',
+ 'pegfilgrastim',
+ 'sargramostim',
+ 'neoplasms',
+ 'osteoporosis',
+ 'osteoporotic fractures',
+ 'teriparatide',
+ 'macular edema',
+ 'ranibizumab',
+ 'retinal vein occlusion',
+ 'diabetes mellitus',
+ 'drug therapy',
+ 'metformin',
+ 'constipation',
+ 'bisacodyl',
+ 'chromosome duplication',
+ 'enema',
+ 'gastrointestinal diseases',
+ 'polyethylene glycols',
+ 'senna extract',
+ 'myocardial infarction',
+ 'hormone replacement therapy',
+ 'testosterone',
+ 'aneurysm',
+ 'cerebral infarction',
+ 'cerebral vasospasm',
+ 'subarachnoid hemorrhage',
+ 'cerebral angiography',
+ 'nimodipine',
+ 'tomography',
+ 'ultrasonography',
+ 'atrial fibrillation',
+ 'embolism',
+ 'hemorrhage',
+ 'hospitalization',
+ 'risk assessment',
+ 'risk factors',
+ 'rivaroxaban',
+ 'stroke',
+ 'atorvastatin',
+ 'amputation',
+ 'cilostazol',
+ 'peripheral arterial disease',
+ 'biliary tract neoplasms',
+ 'infection',
+ 'catheter-related infections',
+ 'fungemia',
+ 'parenteral nutrition',
+ 'staphylococcus epidermidis',
+ 'pertussis vaccine',
+ 'whooping cough',
+ 'clopidogrel',
+ 'ticlopidine',
+ 'rosuvastatin',
+ 'simvastatin',
+ 'cardiovascular diseases',
+ 'ezetimibe',
+ 'hypercholesterolemia',
+ 'medication adherence',
+ 'haemophilus infections',
+ 'haemophilus influenzae type b',
+ 'choriocarcinoma',
+ 'cyclophosphamide',
+ 'dactinomycin',
+ 'etoposide',
+ 'gestational trophoblastic disease',
+ 'hydatidiform mole',
+ 'methotrexate',
+ 'pregnancy',
+ 'vincristine',
+ 'methadone',
+ 'morphine',
+ 'pain management',
+ 'glyburide',
+ 'ciprofloxacin',
+ 'corneal ulcer',
+ 'eye infections',
+ 'gram-negative bacterial infections',
+ 'levofloxacin',
+ 'calcitonin',
+ 'critical care',
+ 'peritonitis',
+ 'shock',
+ 'arthritis',
+ 'etanercept',
+ 'immunoglobulin g',
+ 'spondylarthritis',
+ 'eptifibatide',
+ 'percutaneous coronary intervention',
+ 'creatinine',
+ 'kidney transplantation',
+ 'body composition',
+ 'vitamin d deficiency',
+ 'calcium',
+ 'hyperparathyroidism',
+ 'sarcopenia',
+ 'vitamin d',
+ 'acetaminophen',
+ 'gastric bypass',
+ 'obesity',
+ 'pain measurement',
+ 'pain',
+ 'bipolar disorder',
+ 'dementia',
+ 'lithium',
+ 'prednisolone',
+ 'allopurinol',
+ 'chronic disease',
+ 'febuxostat',
+ 'gout',
+ 'uric acid',
+ 'depressive disorder',
+ 'hospice care',
+ 'ketamine',
+ 'multiple myeloma',
+ 'biopsy',
+ 'blood cell count',
+ 'bone diseases',
+ 'hypercalcemia',
+ 'magnetic resonance imaging',
+ 'positron-emission tomography',
+ 'clozapine',
+ 'polypharmacy',
+ 'schizophrenia',
+ 'coronary artery disease',
+ 'sirolimus',
+ 'wound healing',
+ 'acute kidney injury',
+ 'terlipressin',
+ 'intraoperative care',
+ 'liver transplantation',
+ 'lypressin',
+ 'postoperative complications',
+ 'amitriptyline',
+ 'fibromyalgia',
+ 'gabapentin',
+ 'pregabalin',
+ 'drug-related side effects and adverse reactions',
+ 'renal insufficiency',
+ 'escherichia coli',
+ 'escherichia coli infections',
+ 'urinary tract infections',
+ 'digoxin',
+ 'heart failure',
+ 'spironolactone',
+ 'acute disease',
+ 'iohexol',
+ 'pulmonary embolism',
+ 'orlistat',
+ 'sibutramine',
+ 'body mass index',
+ 'weight gain',
+ 'weight loss',
+ 'lung neoplasms',
+ 'bevacizumab',
+ 'fluorescein angiography',
+ 'retinal diseases',
+ 'health status indicators',
+ 'hypertension',
+ 'nebivolol',
+ 'blood pressure',
+ 'naltrexone',
+ 'drug interactions',
+ 'brain ischemia',
+ 'esomeprazole',
+ 'lansoprazole',
+ 'omeprazole',
+ 'pantoprazole',
+ 'rabeprazole',
+ 'pemetrexed',
+ 'prognosis',
+ 'heart diseases',
+ 'hyperuricemia',
+ 'hematologic neoplasms',
+ 'lymphoma',
+ 'doxorubicin',
+ 'prednisone',
+ 'ovarian neoplasms',
+ 'peritoneal neoplasms',
+ 'topotecan',
+ 'methicillin',
+ 'renal dialysis',
+ 'adenocarcinoma',
+ 'barrett esophagus',
+ 'esophageal neoplasms',
+ 'gastroesophageal reflux',
+ 'imatinib',
+ 'leukemia',
+ 'rna',
+ 'carboplatin',
+ 'paclitaxel',
+ 'pneumonectomy',
+ 'bone transplantation',
+ 'durapatite',
+ 'neurosurgical procedures',
+ 'hyperkalemia',
+ 'montelukast',
+ 'asthma',
+ 'mental disorders',
+ 'clostridioides difficile',
+ 'clostridium infections',
+ 'linezolid',
+ 'vancomycin',
+ 'cholecalciferol',
+ 'diet',
+ 'cause of death',
+ 'prenatal care',
+ 'streptococcus agalactiae',
+ 'pregnancy complications',
+ 'streptococcal infections',
+ 'cetuximab',
+ 'colorectal neoplasms',
+ 'fluorouracil',
+ 'hepatectomy',
+ 'leucovorin',
+ 'liver neoplasms',
+ 'counseling',
+ 'epilepsy',
+ 'folic acid',
+ 'adiposity',
+ 'waist circumference',
+ 'body weight',
+ 'overweight',
+ 'central serous chorioretinopathy',
+ 'indocyanine green',
+ 'retinal detachment',
+ 'hydroxychloroquine',
+ 'rheumatic diseases',
+ 'vision screening',
+ 'visual field tests',
+ 'carbamazepine',
+ 'chemoprevention',
+ 'levetiracetam',
+ 'phenytoin',
+ 'piracetam',
+ 'seizures',
+ 'radiotherapy',
+ 'dacarbazine',
+ 'temozolomide',
+ 'adalimumab',
+ 'infliximab',
+ 'crohn disease',
+ 'digestive system surgical procedures',
+ 'opportunistic infections',
+ 'psoriasis',
+ 'ustekinumab',
+ 'multiple sclerosis',
+ 'natalizumab',
+ 'phenylephrine',
+ 'retinopathy of prematurity',
+ 'tropicamide',
+ 'enterocolitis',
+ 'neonatal screening',
+ 'aspirin',
+ 'catheterization',
+ 'upper extremity deep vein thrombosis',
+ 'anxiety disorders',
+ 'aripiprazole',
+ 'conduct disorder',
+ 'hyperkinesis',
+ 'olanzapine',
+ 'psychotic disorders',
+ 'risperidone',
+ 'accidental falls',
+ 'cardiac surgical procedures',
+ 'delirium',
+ 'kidney diseases',
+ 'zolpidem',
+ 'craniotomy',
+ 'elective surgical procedures',
+ 'postoperative hemorrhage',
+ 'thrombosis',
+ 'headache',
+ 'brain concussion',
+ 'post-traumatic headache',
+ 'omalizumab',
+ 'liver failure',
+ 'tissue plasminogen activator',
+ 'blood pressure determination',
+ 'cholesterol',
+ 'drug hypersensitivity',
+ 'iodine',
+ 'skin tests',
+ 'bleomycin',
+ 'diagnostic imaging',
+ 'hodgkin disease',
+ 'vinblastine',
+ 'bilirubin',
+ 'cyclosporine',
+ 'drug monitoring',
+ 'liver diseases',
+ 'glaucoma',
+ 'mitomycin',
+ 'quality-adjusted life years',
+ 'trabeculectomy',
+ 'bone neoplasms',
+ 'docetaxel',
+ 'prostatic neoplasms',
+ 'gefitinib',
+ 'adenocarcinoma of lung',
+ 'mutation',
+ 'educational status',
+ 'hiv infections',
+ 'hepatitis',
+ 'heroin dependence',
+ 'wounds and injuries',
+ 'warfarin',
+ 'acitretin',
+ 'family planning services',
+ 'fasting',
+ 'hyperlipidemias',
+ 'myocardial ischemia',
+ 'risk management',
+ 'tamoxifen',
+ 'breast neoplasms',
+ 'endometrial neoplasms',
+ 'hypersensitivity',
+ 'blood coagulation disorders',
+ 'fibrinogen',
+ 'international normalized ratio',
+ 'platelet count',
+ 'snake bites',
+ 'clonidine',
+ 'migraine disorders',
+ 'sumatriptan',
+ 'oxaliplatin',
+ 'acidosis',
+ 'contraindications',
+ 'lupus nephritis',
+ 'diarrhea',
+ 'topiramate',
+ 'fructose',
+ 'anus neoplasms',
+ 'brachytherapy',
+ 'colostomy',
+ 'papillomavirus infections',
+ 'ischemic stroke',
+ 'coronary artery bypass',
+ 'heparin',
+ 'thrombophilia',
+ 'acute coronary syndrome',
+ 'dutasteride',
+ 'finasteride',
+ 'prostatic hyperplasia',
+ 'bortezomib',
+ 'lenalidomide',
+ 'thalidomide',
+ 'interferon-beta',
+ 'chlorpromazine',
+ 'haloperidol',
+ 'drug resistant epilepsy',
+ 'venous thrombosis',
+ 'nephrectomy',
+ 'postoperative care',
+ 'urologic neoplasms',
+ 'status epilepticus',
+ 'neonatal abstinence syndrome',
+ 'hepatitis c',
+ 'proline',
+ 'adenine',
+ 'ivabradine',
+ 'bisoprolol',
+ 'oxybutynin',
+ 'transcutaneous electric nerve stimulation',
+ 'intraocular pressure',
+ 'dexamethasone',
+ 'diabetic retinopathy',
+ 'ocular hypertension',
+ 'tonometry',
+ 'aftercare',
+ 'contraception',
+ 'conscious sedation',
+ 'propofol',
+ 'perampanel',
+ 'diabetes complications',
+ 'obstetric labor complications',
+ 'electrocardiography',
+ 'long qt syndrome',
+ 'liraglutide',
+ 'cachexia',
+ 'roflumilast',
+ 'cryptogenic organizing pneumonia',
+ 'noninvasive ventilation',
+ 'oxygen',
+ 'oxygen inhalation therapy',
+ 'pneumonia',
+ 'pulmonary edema',
+ 'respiratory insufficiency',
+ 'hysteroscopy',
+ 'mifepristone',
+ 'influenza a virus',
+ 'gonadotropin-releasing hormone',
+ 'sofosbuvir',
+ 'liver cirrhosis',
+ 'thyroglobulin',
+ 'thyroid neoplasms',
+ 'thyroidectomy',
+ 'primary prevention',
+ 'dabigatran',
+ 'cocaine',
+ 'horner syndrome',
+ 'alendronate',
+ 'risedronic acid',
+ 'exenatide',
+ 'myelodysplastic syndromes',
+ 'blood transfusion',
+ 'darbepoetin alfa',
+ 'epoetin alfa',
+ 'vitamin k',
+ 'treatment refusal',
+ 'drug resistance',
+ 'mycobacterium tuberculosis',
+ 'rifampin',
+ 'tuberculosis',
+ 'acetylcysteine',
+ 'cytodiagnosis',
+ 'immunohistochemistry',
+ 'immunotherapy',
+ 'ipilimumab',
+ 'melanoma',
+ 'skin neoplasms',
+ 'vemurafenib',
+ 'coinfection',
+ 'isoniazid',
+ 'cinacalcet',
+ 'parathyroid hormone',
+ 'lymphangioma',
+ 'sclerotherapy',
+ 'doxycycline',
+ 'lymphatic abnormalities',
+ 'sodium tetradecyl sulfate',
+ 'hydromorphone',
+ 'scoliosis',
+ 'spinal fusion',
+ 'diabetic neuropathies',
+ 'propafenone',
+ 'echocardiography',
+ 'tachycardia',
+ 'fluticasone',
+ 'laser coagulation',
+ 'aspergillosis',
+ 'galactose',
+ 'piperacillin',
+ 'tazobactam',
+ 'dextropropoxyphene',
+ 'drug overdose',
+ 'oxycodone',
+ 'budesonide',
+ 'diphenhydramine',
+ 'ondansetron',
+ 'osteotomy',
+ 'patient discharge',
+ 'postoperative nausea and vomiting',
+ 'abscess',
+ 'drainage',
+ 'haemophilus influenzae',
+ 'meningitis',
+ 'orbital cellulitis',
+ 'nephrosis',
+ 'secondary prevention',
+ 'capecitabine',
+ 'irinotecan',
+ 'pancreatic neoplasms',
+ 'colonic polyps',
+ 'colonoscopy',
+ 'epinephrine',
+ 'gastrointestinal hemorrhage',
+ 'intestinal perforation',
+ 'polidocanol',
+ 'beta-alanine',
+ 'donepezil',
+ 'galantamine',
+ 'rivastigmine',
+ 'breath tests',
+ 'gastroparesis',
+ 'irritable bowel syndrome',
+ 'xylose',
+ 'gastritis',
+ 'helicobacter pylori',
+ 'social factors',
+ 'life style',
+ 'birth weight',
+ 'alleles',
+ 'genetic variation',
+ 'genotype',
+ 'hip fractures',
+ 'rehabilitation',
+ 'cognition',
+ 'cognition disorders',
+ 'neurologic examination',
+ 'neuropsychological tests',
+ 'stroke rehabilitation',
+ 'feces',
+ 'endocarditis',
+ 'carpal tunnel syndrome',
+ 'de quervain disease',
+ 'lidocaine',
+ 'trigger finger disorder',
+ 'angioplasty',
+ 'medical audit',
+ 'candidiasis',
+ 'nystatin',
+ 'sepsis',
+ '439777',
+ '950637',
+ '442986',
+ '442985',
+ '4119158',
+ '1314273',
+ '432870',
+ '1133201',
+ '4032799',
+ '1588000',
+ '1589505',
+ '1301025',
+ '132736',
+ '1790812',
+ '36715943',
+ '1397599',
+ '4175963',
+ '36716620',
+ '4061299',
+ '4111017',
+ '4123018',
+ '37396745',
+ '373724',
+ '1350066',
+ '4039581',
+ '4021989',
+ '4131748',
+ '1336539',
+ '42900111',
+ '4106092',
+ '4267804',
+ '4298121',
+ '435459',
+ '4250734',
+ '1304850',
+ '1325608',
+ '1308432',
+ '438112',
+ '80502',
+ '40480160',
+ '1521987',
+ '4290333',
+ '19080982',
+ '4187790',
+ '201820',
+ '4216752',
+ '1503297',
+ '75860',
+ '924939',
+ '4004777',
+ '4265034',
+ '4000610',
+ '948515',
+ '938268',
+ '4329847',
+ '4141760',
+ '1636780',
+ '4332246',
+ '443454',
+ '4249605',
+ '432923',
+ '4138836',
+ '1319133',
+ '4161190',
+ '4037672',
+ '313217',
+ '4185607',
+ '437312',
+ '4214577',
+ '4024612',
+ '4214014',
+ '40241331',
+ '381316',
+ '1545958',
+ '4217482',
+ '1350310',
+ '317309',
+ '4129884',
+ '432250',
+ '4258835',
+ '4202922',
+ '4096831',
+ '44814416',
+ '19033193',
+ '257778',
+ '1322184',
+ '1302398',
+ '1510813',
+ '1539403',
+ '134057',
+ '1526475',
+ '4029305',
+ '4056965',
+ '4211821',
+ '19113026',
+ '4092517',
+ '1310317',
+ '1311443',
+ '1350504',
+ '4214186',
+ '4261322',
+ '1305058',
+ '4299535',
+ '1308290',
+ '1103640',
+ '1110410',
+ '4083171',
+ '1559684',
+ '1797513',
+ '373202',
+ '4134613',
+ '435742',
+ '1742253',
+ '42900359',
+ '4046295',
+ '196152',
+ '201965',
+ '4291025',
+ '1151789',
+ '19117912',
+ '4153359',
+ '1322199',
+ '4216130',
+ '19071968',
+ '4322471',
+ '4287551',
+ '436070',
+ '19018544',
+ '133729',
+ '36674346',
+ '19009405',
+ '1125315',
+ '40483096',
+ '433736',
+ '4021323',
+ '4329041',
+ '436665',
+ '4182210',
+ '19124477',
+ '1550557',
+ '1167322',
+ '443783',
+ '19017742',
+ '440674',
+ '43532213',
+ '440383',
+ '4301458',
+ '785649',
+ '437233',
+ '4311405',
+ '4339397',
+ '75909',
+ '4055577',
+ '4013636',
+ '4305790',
+ '800878',
+ '4030905',
+ '435783',
+ '4187067',
+ '19034726',
+ '4177611',
+ '761083',
+ '19119253',
+ '4047390',
+ '4076862',
+ '19092373',
+ '4300243',
+ '710062',
+ '442315',
+ '797399',
+ '734354',
+ '441207',
+ '4030518',
+ '19030957',
+ '440320',
+ '81902',
+ '1326303',
+ '316139',
+ '970250',
+ '443883',
+ '19080985',
+ '440417',
+ '741530',
+ '739363',
+ '4245997',
+ '37311268',
+ '4058570',
+ '4128888',
+ '1397141',
+ '4068181',
+ '378416',
+ '4169147',
+ '316866',
+ '1314577',
+ '4326744',
+ '1714319',
+ '4230596',
+ '4305274',
+ '904453',
+ '929887',
+ '923645',
+ '948078',
+ '911735',
+ '1304919',
+ '4069425',
+ '321588',
+ '4147761',
+ '4147164',
+ '432571',
+ '1338512',
+ '1551099',
+ '4047650',
+ '4129887',
+ '1378509',
+ '1361385',
+ '4146536',
+ '40484156',
+ '443344',
+ '4130990',
+ '318800',
+ '1304107',
+ '317510',
+ '19136013',
+ '1344905',
+ '1378382',
+ '4172438',
+ '4214028',
+ '19113001',
+ '4041193',
+ '4041897',
+ '1154161',
+ '317009',
+ '432586',
+ '44816333',
+ '4211252',
+ '1736887',
+ '1707687',
+ '19095164',
+ '4222559',
+ '4083743',
+ '4173786',
+ '43012409',
+ '43530950',
+ '437779',
+ '1315411',
+ '4130514',
+ '955632',
+ '4030150',
+ '1388796',
+ '4130518',
+ '4254477',
+ '4029498',
+ '19111620',
+ '4172830',
+ '4099154',
+ '437525',
+ '372894',
+ '19078612',
+ '378414',
+ '1777087',
+ '138845',
+ '4237318',
+ '4336678',
+ '740275',
+ '4149373',
+ '711584',
+ '740910',
+ '19046654',
+ '377091',
+ '4029715',
+ '1311409',
+ '1341149',
+ '1119119',
+ '937368',
+ '201606',
+ '4030654',
+ '4247535',
+ '140168',
+ '40161532',
+ '374919',
+ '735843',
+ '1135766',
+ '373766',
+ '906072',
+ '4184503',
+ '4246502',
+ '1112807',
+ '4164278',
+ '4028057',
+ '442077',
+ '757688',
+ '443617',
+ '4195305',
+ '785788',
+ '436073',
+ '735979',
+ '435991',
+ '4275564',
+ '4303087',
+ '198124',
+ '744740',
+ '4101626',
+ '4166767',
+ '4002836',
+ '4231363',
+ '378253',
+ '4001336',
+ '376104',
+ '1110942',
+ '4245975',
+ '1347450',
+ '4264765',
+ '19059097',
+ '4166257',
+ '1780601',
+ '4205590',
+ '1329241',
+ '4180938',
+ '4041797',
+ '19008264',
+ '4230543',
+ '19010482',
+ '4216473',
+ '194984',
+ '437541',
+ '1389036',
+ '4158643',
+ '4338741',
+ '444204',
+ '1315942',
+ '4129902',
+ '1319193',
+ '4112738',
+ '4205432',
+ '4022643',
+ '439727',
+ '194990',
+ '4333676',
+ '432795',
+ '1310149',
+ '929638',
+ '4237486',
+ '4060364',
+ '432867',
+ '4185932',
+ '4024608',
+ '1436678',
+ '81251',
+ '4048225',
+ '4223616',
+ '432585',
+ '19054702',
+ '4306239',
+ '4267147',
+ '4266230',
+ '1398937',
+ '318736',
+ '1140643',
+ '1318011',
+ '435517',
+ '4266013',
+ '4285717',
+ '196523',
+ '742267',
+ '956691',
+ '4129882',
+ '40317890',
+ '4162987',
+ '441788',
+ '4310996',
+ '4336464',
+ '1367571',
+ '4295287',
+ '4215140',
+ '989482',
+ '996416',
+ '197032',
+ '1336825',
+ '19026972',
+ '19137042',
+ '19109079',
+ '794852',
+ '766529',
+ '40483317',
+ '444247',
+ '4027426',
+ '4046550',
+ '4112878',
+ '4332304',
+ '4212326',
+ '197494',
+ '19052736',
+ '19071966',
+ '46234437',
+ '1338005',
+ '918906',
+ '762795',
+ '4216457',
+ '1518254',
+ '4174977',
+ '381290',
+ '4064074',
+ '4186037',
+ '4027509',
+ '4200133',
+ '753626',
+ '42904177',
+ '442793',
+ '440795',
+ '4163951',
+ '314664',
+ '40170911',
+ '134765',
+ '40236897',
+ '36714118',
+ '4177224',
+ '19025274',
+ '4239130',
+ '255848',
+ '4078925',
+ '318459',
+ '4228820',
+ '1508439',
+ '42903441',
+ '19089810',
+ '44785094',
+ '4064161',
+ '19000732',
+ '4131909',
+ '4030107',
+ '4201926',
+ '45775372',
+ '1001419',
+ '4104844',
+ '1557272',
+ '19115051',
+ '1583722',
+ '138994',
+ '4024656',
+ '1304643',
+ '1301125',
+ '19010128',
+ '4019958',
+ '4150981',
+ '44816298',
+ '1763204',
+ '4162434',
+ '1139042',
+ '4023405',
+ '4035726',
+ '4295112',
+ '40238188',
+ '4162276',
+ '444209',
+ '40241937',
+ '4163969',
+ '1782521',
+ '1548111',
+ '43532113',
+ '4110860',
+ '4220838',
+ '1738521',
+ '4124986',
+ '19070012',
+ '1126658',
+ '72418',
+ '4208113',
+ '4044391',
+ '1353256',
+ '4230911',
+ '4314280',
+ '1149380',
+ '4140965',
+ '434281',
+ '19112526',
+ '1746114',
+ '1741122',
+ '1153664',
+ '4208104',
+ '1124957',
+ '939259',
+ '1129625',
+ '1000560',
+ '4197229',
+ '4240723',
+ '4032472',
+ '444202',
+ '4046266',
+ '43012721',
+ '435785',
+ '434942',
+ '4196427',
+ '1337620',
+ '1367268',
+ '4129886',
+ '4285898',
+ '4249893',
+ '1343916',
+ '192671',
+ '193242',
+ '40175900',
+ '19123344',
+ '715997',
+ '757627',
+ '733523',
+ '4064334',
+ '195847',
+ '75576',
+ '19010499',
+ '201340',
+ '42903959',
+ '4246860',
+ '4046893',
+ '4187520',
+ '4235440',
+ '4271711',
+ '4025367',
+ '433856',
+ '4180248',
+ '4162723',
+ '40480615',
+ '4021179',
+ '4145254',
+ '4097325',
+ '4019497',
+ '441589',
+ '380094',
+ '73300',
+ '989878',
+ '763891',
+ '4302652',
+ '4177509',
+ '433968',
+ '922570',
+ '132797'],
 
 					classes: ['bg-primary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info'],
 					whiteList: false,
@@ -469,7 +1854,46 @@
           
 				});
 
-      document.getElementsByClassName('amsify-suggestags-input')[0].placeholder = "Type Concept ID / Name...";
+        $('input[name="select1"]').amsifySuggestags({
+					suggestions: con_sug,
+
+					classes: ['bg-primary', 'bg-success', 'bg-danger', 'bg-warning', 'bg-info'],
+					whiteList: false,
+          type:'amsify',
+          tagLimit:10,
+
+          checkSimilar:true,
+          afterAdd:  function(e){
+            //console.log('here')
+            start = 0;
+            crds = 0;
+              //console.log(e.target.value)
+              //Send request to the API server for data.
+              document.getElementsByClassName('cards-main')[0].innerHTML = '';
+              datafound = 0;
+              val = $('input[name="select1"]').val();
+              //main_searched_data_ = [];
+              //get_data_by_tags(val)
+
+              //show_cards_data("anemia")
+              flt_data['flt_co'] = $('input[name="select1"]').val();
+              console.log(flt_data);
+              get_data()
+              
+          },
+          afterRemove: function(e){
+            start = 0
+            crds = 0
+            datafound = 0
+            //console.log('removed!' + e)
+            document.getElementsByClassName('cards-main')[0].innerHTML = ''
+            flt_data['flt_co'] = $('input[name="select1"]').val()
+            console.log(flt_data)
+            get_data()
+          }
+          
+				});
+
       btn_text = {
         0: "Load less",
         3: "Load more"
@@ -675,6 +2099,7 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 }
+
     </script>
   </body>
 </html>
