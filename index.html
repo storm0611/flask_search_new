@@ -259,7 +259,7 @@
         'flt_jo': [],
         'flt_dm': [],
         'flt_so': [],
-        'flt_limit': 3
+        'flt_limit': 4
       };
 
       get_study_design()
@@ -1896,13 +1896,13 @@
 
       btn_text = {
         0: "Load less",
-        3: "Load more"
+        4: "Load more"
       }
 
       $('#loadbtn').click(function(){
         if (res.length) {
-          flt_data['flt_limit'] = 3 - flt_data['flt_limit']
-          display_data(res)
+          flt_data['flt_limit'] = 4 - flt_data['flt_limit'];
+          display_data(res);
             document.getElementById('loadbtn').textContent = btn_text[flt_data['flt_limit']]
           //get_data_by_tags($('input[name="select2"]').val())
         }
@@ -1910,13 +1910,16 @@
 
       function display_data(elements){
 
-        document.getElementsByClassName('p-result')[0].textContent = "Showing "+elements.length+" results"
+        document.getElementsByClassName('p-result')[0].textContent = "Showing "+(elements.length-1).toString()+" results"
         document.getElementsByClassName('cards-main')[0].innerHTML = ''
         console.log(elements)
-        if (flt_data['flt_limit'] && elements.length)
+        var lmt = elements.length
+        if (flt_data['flt_limit'] == 0) {
+
+        }else if (lmt - 1 > flt_data['flt_limit']) {
           lmt = flt_data['flt_limit']
-        else
-          lmt = elements.length
+        }
+        
         for (i = 0; i < lmt - 1; i++){
           element = elements[i]
             document.getElementsByClassName('cards-main')[0].innerHTML += 
