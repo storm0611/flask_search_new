@@ -1,0 +1,165 @@
+.multiselect-container>li>a>label {
+    padding: 4px 20px 3px 20px;
+}
+
+.vscomp-ele {
+    max-width: 100% !important;
+}
+
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    margin: 1.5%;
+    margin-top: 2%;
+}
+
+.data-points {
+    display: flex;
+    flex-grow: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.point-1 {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.logo-part {
+    display: flex;
+    flex: 1;
+}
+
+.logo {
+    margin-top: -15px;
+    max-width: 300px;
+    height: 50px;
+}
+
+.nav-text {
+    color: rgb(195, 194, 194);
+}
+
+.nav-about {
+    color: rgb(195, 194, 194);
+    cursor: pointer;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 13%;
+    margin-right: 13%;
+    margin-top: 5%;
+}
+
+.search-filter {
+    display: flex;
+    width: 100% !important;
+    flex-grow: 3;
+    flex-direction: column;
+}
+
+#cars {
+    width: 100%;
+}
+
+.search-card {
+    border: 1px solid rgb(224, 224, 224);
+    width: 100%;
+    padding: 2%;
+}
+
+.amsify-suggestags-input-area {
+    border-radius: 5px;
+}
+
+.results-label {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: flex-end;
+    color: rgb(138, 141, 141);
+    font-size: smaller;
+}
+
+.amsify-suggestags-area {
+    width: 100%;
+}
+
+.amsify-suggestags-input {
+    max-width: 1000px !important;
+}
+
+.amsify-suggestags-area:active {
+    border-color: black;
+}
+
+.search-button-div {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 2%;
+}
+
+.select2 {
+    color: white;
+    flex: 1 150px;
+    margin-top: 1%;
+}
+
+.cards-main {
+    width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.card-top {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    color: white;
+}
+
+.card-top-date {
+    font-weight: normal;
+}
+
+.card {
+    width: 100%;
+    margin-top: 2%;
+    box-shadow: 0 0 10px 0 rgba(177, 177, 177, 0.26);
+}
+
+.card:hover {
+    box-shadow: 0 0 50px 0 rgba(94, 94, 94, 0.26);
+    cursor: pointer;
+}
+
+.preload {
+    position: fixed;
+    top: 800px;
+    z-index: 10;
+    flex: 1;
+    margin: 2%;
+}
+
+.attrs {
+    display: flex;
+    flex-direction: row;
+    color: white;
+    margin: 1%;
+    margin-top: 3%;
+    margin-bottom: 3%;
+    flex-wrap: wrap;
+}
+
+.db-cols {
+    margin-right: 1%;
+    margin-top: 1%;
+}
