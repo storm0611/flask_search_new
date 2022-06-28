@@ -18,14 +18,14 @@ import logging
 import numpy as np
 
 app = Flask(__name__)
-# app.config['MYSQL_DATABASE_USER'] = 'Tandem7'
-# app.config['MYSQL_DATABASE_PASSWORD'] = 'shani@@@@143'
-# app.config['MYSQL_DATABASE_DB'] = 'Tandem7$articles_db'
-# app.config['MYSQL_DATABASE_HOST'] = 'Tandem7.mysql.pythonanywhere-services.com'
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = ''
-app.config['MYSQL_DATABASE_DB'] = 'mydb'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_USER'] = 'Tandem7'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'shani@@@@143'
+app.config['MYSQL_DATABASE_DB'] = 'Tandem7$articles_db'
+app.config['MYSQL_DATABASE_HOST'] = 'Tandem7.mysql.pythonanywhere-services.com'
+# app.config['MYSQL_DATABASE_USER'] = 'root'
+# app.config['MYSQL_DATABASE_PASSWORD'] = ''
+# app.config['MYSQL_DATABASE_DB'] = 'mydb'
+# app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 
 cors = CORS(app)
 MySql = MySQL()
@@ -33,6 +33,103 @@ MySql.init_app(app)
 connection = MySql.connect()
 Pointer = connection.cursor()
 
+
+def init_db():
+    sql_query = """DROP TABLE IF EXISTS articles;
+                    CREATE TABLE articles  (
+                    id int NOT NULL AUTO_INCREMENT,
+                    pm_id text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    pm_link text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    date_pub text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    journal_id int NULL DEFAULT NULL,
+                    title longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+                    abstract longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+                    category_name text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    n_participant int NULL DEFAULT NULL,
+                    PRIMARY KEY (id) USING BTREE
+                    ) ENGINE = InnoDB AUTO_INCREMENT = 196 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    sql_query = """DROP TABLE IF EXISTS authors;
+                    CREATE TABLE authors  (
+                    id int NOT NULL AUTO_INCREMENT,
+                    author text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    author_ranking text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    PRIMARY KEY (id) USING BTREE
+                    ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    sql_query = """DROP TABLE IF EXISTS authors_connect;
+                    CREATE TABLE authors_connect  (
+                    article_id int NULL DEFAULT NULL,
+                    author_id int NULL DEFAULT NULL
+                    ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    sql_query = """DROP TABLE IF EXISTS data_type;
+                    CREATE TABLE data_type  (
+                    id int NOT NULL AUTO_INCREMENT,
+                    data_type text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    PRIMARY KEY (id) USING BTREE
+                    ) ENGINE = InnoDB AUTO_INCREMENT = 93 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    sql_query = """DROP TABLE IF EXISTS geography;
+                    CREATE TABLE geography  (
+                    id int NOT NULL AUTO_INCREMENT,
+                    country text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    region text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    city text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    PRIMARY KEY (id) USING BTREE
+                    ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    sql_query = """DROP TABLE IF EXISTS journals;
+                    CREATE TABLE journals  (
+                    id int NOT NULL AUTO_INCREMENT,
+                    journal text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    journal_country text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    ranking text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    PRIMARY KEY (id) USING BTREE
+                    ) ENGINE = InnoDB AUTO_INCREMENT = 146 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    sql_query = """DROP TABLE IF EXISTS mesh;
+                    CREATE TABLE mesh  (
+                    id int NOT NULL AUTO_INCREMENT,
+                    mesh text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+                    concept_id text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    domain text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    PRIMARY KEY (id) USING BTREE
+                    ) ENGINE = InnoDB AUTO_INCREMENT = 382 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    sql_query = """DROP TABLE IF EXISTS meshes_connect;
+                    CREATE TABLE meshes_connect  (
+                    article_id int NULL DEFAULT NULL,
+                    mesh_id int NULL DEFAULT NULL
+                    ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    sql_query = """DROP TABLE IF EXISTS study_design;
+                    CREATE TABLE study_design  (
+                    id int NOT NULL AUTO_INCREMENT,
+                    study_design text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    PRIMARY KEY (id) USING BTREE
+                    ) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    sql_query = """DROP TABLE IF EXISTS study_design_connect;
+                    CREATE TABLE study_design_connect  (
+                    article_id int NULL DEFAULT NULL,
+                    study_design_id int NULL DEFAULT NULL
+                    ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    sql_query = """DROP TABLE IF EXISTS vocabs_connect;
+                    CREATE TABLE vocabs_connect  (
+                    article_id int NULL DEFAULT NULL,
+                    vocab_id int NULL DEFAULT NULL
+                    ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    sql_query = """DROP TABLE IF EXISTS vocabularies;
+                    CREATE TABLE vocabularies  (
+                    id int NOT NULL AUTO_INCREMENT,
+                    omop_vocab text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+                    PRIMARY KEY (id) USING BTREE
+                    ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;"""
+    Pointer.execute(sql_query)
+    
 
 def insert_data(_table, _what, _where, _wval, _where1='', _wval1='', _where2='', _wval2='', _where3='', _wval3='', _where4='', _wval4=''):
     select_query = "SELECT " + _what + " FROM " + \
@@ -66,6 +163,7 @@ def insert_data_connect(_table, _val1, _val2):
 # Sevrer script with two API endpoints (Upload and Fetch) that only accept http or https POST requests
 @app.route('/add', methods=['POST']) #/add end point that can only be call via POST request
 def add_article():
+    init_db()
     #get data from the Client side through API and put data to the database
     json_data = request.get_json(force=True)
     print(json_data)
