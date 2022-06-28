@@ -11,7 +11,7 @@
  Target Server Version : 100422
  File Encoding         : 65001
 
- Date: 22/06/2022 01:28:41
+ Date: 28/06/2022 04:24:25
 */
 
 SET NAMES utf8mb4;
@@ -115,6 +115,7 @@ CREATE TABLE `mesh`  (
   `mesh` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `concept_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
   `domain` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+  `category_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 

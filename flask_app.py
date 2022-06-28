@@ -1,6 +1,7 @@
 from ctypes.wintypes import POINT
 from email.errors import InvalidMultipartContentTransferEncodingDefect
 import json
+from select import select
 from unittest import result
 from urllib import response
 
@@ -18,14 +19,14 @@ import logging
 import numpy as np
 
 app = Flask(__name__)
-app.config['MYSQL_DATABASE_USER'] = 'Tandem7'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'shani@@@@143'
-app.config['MYSQL_DATABASE_DB'] = 'Tandem7$articles_db'
-app.config['MYSQL_DATABASE_HOST'] = 'Tandem7.mysql.pythonanywhere-services.com'
-# app.config['MYSQL_DATABASE_USER'] = 'root'
-# app.config['MYSQL_DATABASE_PASSWORD'] = ''
-# app.config['MYSQL_DATABASE_DB'] = 'mydb'
-# app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+# app.config['MYSQL_DATABASE_USER'] = 'Tandem7'
+# app.config['MYSQL_DATABASE_PASSWORD'] = 'shani@@@@143'
+# app.config['MYSQL_DATABASE_DB'] = 'Tandem7$articles_db'
+# app.config['MYSQL_DATABASE_HOST'] = 'Tandem7.mysql.pythonanywhere-services.com'
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = ''
+app.config['MYSQL_DATABASE_DB'] = 'mydb'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 
 cors = CORS(app)
 MySql = MySQL()
@@ -131,7 +132,7 @@ def init_db():
     Pointer.execute(sql_query)
     
 
-def insert_data(_table, _what, _where, _wval, _where1='', _wval1='', _where2='', _wval2='', _where3='', _wval3='', _where4='', _wval4=''):
+def insert_data(_table, _what, _where, _wval, _where1='', _wval1='', _where2='', _wval2='', _where3='', _wval3='', _where4='', _wval4='', _where5='', _wval5=''):
     select_query = "SELECT " + _what + " FROM " + \
         _table + " WHERE " + _where + "=" + _wval + ";"
     print(select_query)    
@@ -141,8 +142,8 @@ def insert_data(_table, _what, _where, _wval, _where1='', _wval1='', _where2='',
         id = result[0][0]
     else:
         insert_query = "INSERT INTO " + _table + \
-            " (" + _where + _where1 + _where2 + _where3 + _where4 + \
-            ") VALUES (" + _wval + _wval1 + _wval2 + _wval3 + _wval4 + ");"
+            " (" + _where + _where1 + _where2 + _where3 + _where4 + _where5 + \
+            ") VALUES (" + _wval + _wval1 + _wval2 + _wval3 + _wval4 + _wval5 + ");"
         print(insert_query)
         Pointer.execute(insert_query)
         connection.commit()
@@ -163,25 +164,25 @@ def insert_data_connect(_table, _val1, _val2):
 # Sevrer script with two API endpoints (Upload and Fetch) that only accept http or https POST requests
 @app.route('/add', methods=['POST']) #/add end point that can only be call via POST request
 def add_article():
-    init_db()
+    # init_db()
     #get data from the Client side through API and put data to the database
     json_data = request.get_json(force=True)
     print(json_data)
 #     json_data = request.get_json()
-    pm_id = int64(json_data['pm_id'])
+    pm_id = int(json_data['pm_id'])
     pm_link = json_data['pm_link']
     date_pub = json_data['date_pub']
     journal = json_data['journal']
     abstract = json_data['abstract']
     title = json_data['title']
     mesh = json_data['mesh']
-    concept_id = int64(json_data['concept_id'])
+    concept_id = int(json_data['concept_id'])
     study_design = json_data['study_design']
     data_type = json_data['data_type']
     domain_id = json_data['domain']
     category_name = json_data['category_name']
     
-    if pm_id and pm_link and date_pub and journal and abstract and title and mesh and concept_id and study_design and data_type and domain_id and category_name and request.method == 'POST':
+    if pm_id and pm_link and date_pub and journal and abstract and title and mesh and concept_id and study_design and data_type and domain_id and request.method == 'POST':
         journal_id = insert_data(
             'journals', 'id', 'journal', "'" + str(journal) + "'")
         print(journal_id)
@@ -192,9 +193,9 @@ def add_article():
         if len(res):
             article_id = res[0][0]
         else:
-            insert_query = "INSERT INTO articles (pm_id, pm_link, date_pub, abstract, title, journal_id, category_name) VALUES (" + \
+            insert_query = "INSERT INTO articles (pm_id, pm_link, date_pub, abstract, title, journal_id) VALUES (" + \
                 str(pm_id) + ", '" + str(pm_link) + "', '" + date_pub + "', '" + \
-                abstract + "', '" + title + "', " + str(journal_id) + ", '" + category_name + "');"
+                abstract + "', '" + title + "', " + str(journal_id) + ");"
             # print(insert_query)
             Pointer.execute(insert_query)
             connection.commit()
@@ -219,7 +220,7 @@ def add_article():
             article_id), str(data_type_id))
 
         mesh_id = insert_data('mesh', 'id', 'mesh', "'" + mesh + "'", ', concept_id',
-                              ", " + str(concept_id), ', domain', ", '" + domain_id + "'",)
+                              ", " + str(concept_id), ', domain', ", '" + domain_id + "'", ', category_name', ", '" + category_name + "'")
         insert_data_connect(
             'meshes_connect', str(article_id), str(mesh_id))
         response = jsonify('Article Added!')
@@ -270,7 +271,7 @@ def get_drug_categories():
     if (request.method == 'POST'):
         connection =MySql.connect()
         Pointer = connection.cursor()
-        Pointer.execute("SELECT category_name FROM articles")
+        Pointer.execute("SELECT distinct category_name FROM mesh WHERE domain='Drug'")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -284,7 +285,8 @@ def get_condition_categories():
     if (request.method == 'POST'):
         connection =MySql.connect()
         Pointer = connection.cursor()
-        Pointer.execute("SELECT category_name FROM articles")
+        Pointer.execute(
+            "SELECT distinct category_name FROM mesh WHERE domain='Condition'")
         records = Pointer.fetchall()
 
         response = jsonify(records)
@@ -659,12 +661,15 @@ def display_plots_get():
         # print(request.get_json())
         a_id = request.get_json()['articles_id']
         # print(a_id)
-        sql_query = "select mesh, domain from mesh inner join (select * from meshes_connect where article_id in (" + a_id + ")) as mh on mh.mesh_id=mesh.id;"
+        sql_query = "select mesh, domain, category_name from mesh inner join (select * from meshes_connect where article_id in (" + a_id + ")) as mh on mh.mesh_id=mesh.id;"
         Pointer.execute(sql_query)
         res = Pointer.fetchall()
         # print(res)
         n_drug = {}
         n_condition = {}
+        n_drugCategory = {}
+        n_conditionCategory = {}
+        n_pairs = {}
         results = []
         if len(res):
             for i in res:
@@ -673,17 +678,52 @@ def display_plots_get():
                         n_drug[i[0]] += 1
                     except:
                         n_drug[i[0]] = 1
+                    
+                    try:
+                        n_drugCategory[i[2]] += 1
+                    except:
+                        n_drugCategory[i[2]] = 1
+                    
                 else:
                     if i[1] == 'Condition':
                         try:
                             n_condition[i[0]] += 1
                         except:
                             n_condition[i[0]] = 1
+                        try:
+                            n_conditionCategory[i[2]] += 1
+                        except:
+                            n_conditionCategory[i[2]] = 1
             
+            condition_list = list(n_conditionCategory)
+            drug_list = list(n_drugCategory)
+            for i in condition_list:
+                for j in drug_list:
+                    sql_query = "select distinct article_id from meshes_connect inner join (select id as mh_id from mesh where category_name in (" +\
+                                "'" + i + "', " + "'" + j + \
+                        "')) as mh on mh.mh_id=meshes_connect.mesh_id GROUP BY article_id HAVING COUNT(*) > 1"
+                    Pointer.execute(sql_query)
+                    res_pairs = Pointer.fetchall()
+                    if len(res_pairs):
+                        for k in res_pairs:
+                            if a_id.find(str(k[0])) != -1:
+                                val = 1
+                            else:
+                                val = 0
+                            try:
+                                    n_pairs[str(i + '-' + j)] += val
+                            except:
+                                    n_pairs[str(i + '-' + j)] = val    
+                    
             results = {
                 'n_drug' : n_drug,
-                'n_condition' : n_condition
+                'n_condition' : n_condition,
+                'n_drugCategory' : n_drugCategory,
+                'n_conditionCategory' : n_conditionCategory,
+                'n_pairs': n_pairs
             }
+            # print(results)
+            
         # print(results)
         response = jsonify(results)
         # print(response)
@@ -706,6 +746,8 @@ def display_get():
         flt_jo = request.get_json()['flt_jo']
         flt_dm = request.get_json()['flt_dm']
         flt_so = request.get_json()['flt_so']
+        flt_dc = request.get_json()['flt_dc']
+        flt_cc = request.get_json()['flt_cc']
         # print(flt_mesh)
         # print(flt_sd)
         # print(flt_dt)
@@ -717,6 +759,7 @@ def display_get():
         cnt = Pointer.fetchall()[0][0]       
         sign = np.zeros(cnt + 1)
         
+        cnt = 0
         i = 0   
         sql_query = ""
         for i in range(len(flt_mesh)):
@@ -736,25 +779,66 @@ def display_get():
             sql_query += (val)
         if sql_query != "":
             sql_query += ")) as mh on mh.mh_id=meshes_connect.mesh_id"
+            # print(sql_query)
             Pointer.execute(sql_query)
             res_mh = Pointer.fetchall()
+            # print(res_mh)
             for j in res_mh:
                 sign[j[0]] += 1 
+            if len(res_mh) and j:
+                cnt += 1
+                
+        # i = 0   
+        # sql_query = ""
+        # for i in range(len(flt_dm)):
+        #     if i > 0:
+        #         sql_query += ", "
+        #     else:
+        #         sql_query += "select distinct article_id from meshes_connect inner join (select id as mh_id from mesh where domain in ("
+        #     sql_query += ("'" + flt_dm[i] + "'")
+        # if sql_query != "":
+        #     sql_query += ")) as mh on mh.mh_id=meshes_connect.mesh_id"
+        #     Pointer.execute(sql_query)
+        #     res_dm = Pointer.fetchall()
+        #     
+        #     for j in res_dm:
+        #         sign[j[0]] += 1 
                 
         i = 0   
         sql_query = ""
-        for i in range(len(flt_dm)):
+        for i in range(len(flt_dc)):
             if i > 0:
                 sql_query += ", "
             else:
-                sql_query += "select distinct article_id from meshes_connect inner join (select id as mh_id from mesh where domain in ("
-            sql_query += ("'" + flt_dm[i] + "'")
+                sql_query += "select distinct article_id from meshes_connect inner join (select id as mh_id from mesh where domain='Drug' and category_name in ("
+            sql_query += ("'" + flt_dc[i] + "'")
         if sql_query != "":
             sql_query += ")) as mh on mh.mh_id=meshes_connect.mesh_id"
             Pointer.execute(sql_query)
-            res_dm = Pointer.fetchall()
-            for j in res_dm:
+            res_dc = Pointer.fetchall()
+            
+            for j in res_dc:
                 sign[j[0]] += 1 
+            if len(res_dc) and j:
+                cnt += 1
+        
+        i = 0
+        sql_query = ""
+        for i in range(len(flt_cc)):
+            if i > 0:
+                sql_query += ", "
+            else:
+                sql_query += "select distinct article_id from meshes_connect inner join (select id as mh_id from mesh where domain='Condition' and category_name in ("
+            sql_query += ("'" + flt_cc[i] + "'")
+        if sql_query != "":
+            sql_query += ")) as mh on mh.mh_id=meshes_connect.mesh_id"
+            Pointer.execute(sql_query)
+            res_cc = Pointer.fetchall()
+            
+            for j in res_cc:
+                sign[j[0]] += 1
+            if len(res_cc) and j:
+                cnt += 1
                 
         
         # i = 0
@@ -784,11 +868,14 @@ def display_get():
             sql_query += ")) as sd on sd.sd_id=study_design_connect.study_design_id;"
             Pointer.execute(sql_query)
             res_sd = Pointer.fetchall()
+            
             for j in res_sd:
                 # if sign[j[0]] == 1:
                     sign[j[0]] += 1
                 # else:
                 #     sign[j[0]] = 0
+            if len(res_sd) and j:
+                cnt += 1
         i = 0
         sql_query = ""
         for i in range(len(flt_dt)):
@@ -801,11 +888,14 @@ def display_get():
             sql_query += ")) as dt on dt.dt_id=data_type_connect.data_type_id"
             Pointer.execute(sql_query)
             res_dt = Pointer.fetchall()
+            
             for j in res_dt:
-            #     if sign[j[0]] == 2:
+                #     if sign[j[0]] == 2:
                     sign[j[0]] += 1
                 # else:
                 #     sign[j[0]] = 0
+            if len(res_dt) and j:
+                cnt += 1
                 
         i = 0
         sql_query = ""
@@ -819,8 +909,11 @@ def display_get():
             sql_query += ")"
             Pointer.execute(sql_query)
             res_date = Pointer.fetchall()
+            
             for j in res_date:
                 sign[j[0]] += 1
+            if len(res_date) and j:
+                cnt += 1
 
         i = 0
         sql_query = ""
@@ -834,11 +927,14 @@ def display_get():
             sql_query += ")) as dt on dt.dt_id=geography_connect.region_id"
             Pointer.execute(sql_query)
             res_geo = Pointer.fetchall()
+            
             for j in res_geo:
                 #     if sign[j[0]] == 2:
                 sign[j[0]] += 1
                 # else:
                 #     sign[j[0]] = 0
+            if len(res_geo) and j:
+                cnt += 1
         
         i = 0
         sql_query = ""
@@ -852,11 +948,14 @@ def display_get():
             sql_query += ")) as dt on dt.dt_id=vocabs_connect.vocab_id"
             Pointer.execute(sql_query)
             res_vb = Pointer.fetchall()
+            
             for j in res_vb:
                 #     if sign[j[0]] == 2:
                 sign[j[0]] += 1
                 # else:
                 #     sign[j[0]] = 0
+            if len(res_vb) and j:
+                cnt += 1
         
         i = 0
         sql_query = ""
@@ -876,11 +975,15 @@ def display_get():
                 sign[j[0]] += 1
                 # else:
                 #     sign[j[0]] = 0
+            if len(res_jo) and j:
+                cnt += 1
 
-        if max(sign):
+
+        print('cnt:', cnt)
+        print('max(sign):', max(sign))
+        if cnt > 0 and max(sign) == float(cnt):
             results = []
-            res_id = ", ".join([str(i) for i in np.where(sign == max(sign))[0]])
-            print('max(sign):', max(sign))
+            res_id = ",".join([str(i) for i in np.where(sign == max(sign))[0]])
             # print(np.where(sign == max(sign))[0])
             try:
                 sort = flt_so[0].split(' ')

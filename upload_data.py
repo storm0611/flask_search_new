@@ -30,36 +30,37 @@ def read_csv_data():
 def upload_data():
         csv_data = read_csv_data()
        
-        for i in range(len(csv_data)):
+        for i in range(562, len(csv_data)):
 
             # data = {}    
         
             # data['journal'] = re.split("\'|\"", csv_data['journal'][i])[1]
             # data['pm_id'] = str(csv_data['pmid'][i])
-            # data['pm_link'] = csv_data['pm_link'][i]
+            # data['pm_link'] = str(csv_data['pm_link'][i])
             # data['date_pub'] = re.split("\'|\"", csv_data['date_pub'][i])[1]
             # data['abstract'] = re.split("\'|\"", csv_data['abstract'][i])[1]
             # data['title'] = re.split("\'|\"", csv_data['title'][i])[1]
-            # data['study_design'] = csv_data['study_design'][i]
-            # data['data_type'] = csv_data['data_type'][i]
-            # data['mesh'] = csv_data['mesh'][i]
+            # data['study_design'] = str(csv_data['study_design'][i])
+            # data['data_type'] = str(csv_data['data_type'][i])
+            # data['mesh'] = str(csv_data['mesh'][i])
             # data['concept_id'] = str(csv_data['concept_id_1'][i])
-            # data['domain'] = csv_data['domain_id'][i]
-            # data['category_name'] = csv_data['category_name'][i]
+            # data['domain'] = str(csv_data['domain_id'][i])
+            # data['category_name'] = str(csv_data['category_name'][i])
+            # print(data)
             # and here sending data to server and getting response.
             res = requests.post(url=SERVER_URL + endpoint, json={
                 'journal': re.split("\'|\"", csv_data['journal'][i])[1],
                 'pm_id': str(csv_data['pmid'][i]),
-                'pm_link': csv_data['pm_link'][i],
+                'pm_link': str(csv_data['pm_link'][i]),
                 'date_pub': re.split("\'|\"", csv_data['date_pub'][i])[1],
                 'abstract': re.split("\'|\"", csv_data['abstract'][i])[1],
                 'title': re.split("\'|\"", csv_data['title'][i])[1],
-                'study_design': csv_data['study_design'][i],
-                'data_type': csv_data['data_type'][i],
-                'mesh': csv_data['mesh'][i],
+                'study_design': str(csv_data['study_design'][i]),
+                'data_type': str(csv_data['data_type'][i]),
+                'mesh': str(csv_data['mesh'][i]),
                 'concept_id': str(csv_data['concept_id_1'][i]),
-                'domain': csv_data['domain_id'][i],
-                'category_name': csv_data['category_name'][i]
+                'domain': str(csv_data['domain_id'][i]),
+                'category_name': str(csv_data['category_name'][i])
             })
             if (res.status_code == 200):
                 print(res.text + ": "+str(i) + " out of {}".format(len(csv_data['title'])))

@@ -30,7 +30,7 @@
        left:90%;
        width:75px;
        height:40px;
-       position: absolute;
+       position: fixed;
        z-index: 2;
        background: orange; 
       }
@@ -56,7 +56,7 @@
   margin: auto;
   padding: 0;
   border: 1px solid #888;
-  width: 95%;
+  width: 100%;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
@@ -187,12 +187,12 @@
         <div class="example-geography-select"></div>
         <div class="example-vacabulary-select"></div>
         <div class="example-journal-select"></div>
-        <div class="example-domain-select"></div>
+        <div class="example-domain-select" disabled></div>
+        <div class="example-drug_category-select"></div>
+        <div class="example-condition_category-select"></div>
         <div class="example-sort-select"></div>
        <!-- <div class="example-mesh-select"></div>
-        <div class="example-concept-select"></div>
-        <div class="example-drug_category-select"></div>
-        <div class="example-condition_category-select"></div>!-->
+        <div class="example-concept-select"></div>-->
         <!--<input type="text"class="select2" name="select1" value="439777" placeholder="Type here Concept ID...">-->
         <input type="text"class="select2" name="select2" value="anemia" placeholder="Type here Concept ID / Name...">
 
@@ -225,10 +225,21 @@
     <div class="modal-header">
       <h2>Frequency Plots</h2>
     </div>
-    <div class="modal-body" style="height: 600px">
+    <div class="modal-body">
       <div class="row">
-        <div class="col-md-6" id="chartContainer_drug" style="height: 600px"></div>
-        <div class="col-md-6" id="chartContainer_condition" style="height: 600px"></div>
+        <div class="col-md-12" id="chartContainer_drug" style="height: 600px"></div>        
+      </div>
+      <div class="row">
+        <div class="col-md-12" id="chartContainer_condition" style="height: 600px"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-12" id="chartContainer_drugCategory" style="height: 600px"></div>        
+      </div>
+      <div class="row">
+        <div class="col-md-12" id="chartContainer_conditionCategory" style="height: 600px"></div>
+      </div>
+      <div class="row">
+        <div class="col-md-12" id="chartContainer_pairs" style="height: 600px"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -240,8 +251,8 @@
     
 <script>
 
-      //var SERVER_URL = 'http://localhost:5000';
-      var SERVER_URL = 'http://Tandem7.pythonanywhere.com';
+      var SERVER_URL = 'http://localhost:5000';
+      //var SERVER_URL = 'http://Tandem7.pythonanywhere.com';
       var res = {}
       var res_plots_data = {}
       
@@ -259,6 +270,8 @@
         'flt_jo': [],
         'flt_dm': [],
         'flt_so': [],
+        'flt_dc': [],
+        'flt_cc': [],
         'flt_limit': 4
       };
 
@@ -272,18 +285,16 @@
       get_sort()
       get_mesh_sug()
       get_con_sug()
-      //get_drug_categories()
-      //get_condition_categories()
+      get_drug_categories()
+      get_condition_categories()
 
 
       async function get_study_design(){
        
         var response =  await fetch(SERVER_URL + "/get_study_design", 
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
           method: "POST",
+          mode: "cors",
         });
         
         var data = await response.json();
@@ -310,10 +321,8 @@
        
         var response =  await fetch(SERVER_URL + "/get_date_pub", 
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
           method: "POST",
+          mode: "cors",
         });
         
         var data = await response.json();
@@ -339,11 +348,8 @@
   async function get_data_type(){
        
        var response =  await fetch(SERVER_URL + "/get_data_type", {
-         headers: {
-           "Content-Type": "application/json",
-         },
          method: "POST",
-         
+         mode: "cors",
        });
        
        var data = await response.json();
@@ -368,11 +374,8 @@
      async function get_geography(){
        
        var response =  await fetch(SERVER_URL + "/get_geography", {
-         headers: {
-           "Content-Type": "application/json",
-         },
          method: "POST",
-         
+         mode: "cors",
        });
        
        var data = await response.json();
@@ -397,11 +400,8 @@
      async function get_vocabulary(){
        
        var response =  await fetch(SERVER_URL + "/get_vocabulary", {
-         headers: {
-           "Content-Type": "application/json",
-         },
          method: "POST",
-         
+         mode: "cors",
        });
        
        var data = await response.json();
@@ -426,11 +426,8 @@
      async function get_journal(){
        
        var response =  await fetch(SERVER_URL + "/get_journal", {
-         headers: {
-           "Content-Type": "application/json",
-         },
          method: "POST",
-         
+         mode: "cors",
        });
        
        var data = await response.json();
@@ -452,14 +449,63 @@
          });
      }
 
+     async function get_drug_categories(){
+       
+       var response =  await fetch(SERVER_URL + "/get_drug_categories", {
+         method: "POST",
+         mode: "cors",
+       });
+       
+       var data = await response.json();
+
+       myOptions = []
+       data.forEach(elem =>{
+         myOptions.push({
+          value:elem,
+          label:elem
+        });
+       });
+         VirtualSelect.init({
+         ele: '.example-drug_category-select',
+         options: myOptions,
+         multiple:true,
+         showValueAsTags: true,
+         searchPlaceholderText:"Search any Drug Category...",
+         placeholder:"Select Drug Category"
+         });
+     }
+
+     async function get_condition_categories(){
+       
+       var response =  await fetch(SERVER_URL + "/get_condition_categories", {
+         method: "POST",
+         mode: "cors",
+       });
+       
+       var data = await response.json();
+
+       myOptions = []
+       data.forEach(elem =>{
+         myOptions.push({
+          value:elem,
+          label:elem
+        });
+       });
+         VirtualSelect.init({
+         ele: '.example-condition_category-select',
+         options: myOptions,
+         multiple:true,
+         showValueAsTags: true,
+         searchPlaceholderText:"Search any Condition Category...",
+         placeholder:"Select Condition Category"
+         });
+     }
+
      async function get_domain(){
        
        var response =  await fetch(SERVER_URL + "/get_domain", {
-         headers: {
-           "Content-Type": "application/json",
-         },
          method: "POST",
-         
+         mode: "cors",
        });
        
        var data = await response.json();
@@ -514,11 +560,8 @@
      async function get_mesh_sug(){
        
        var response =  await fetch(SERVER_URL + "/get_mesh_sug", {
-         headers: {
-           "Content-Type": "application/json",
-         },
          method: "POST",
-         
+         mode: "cors",
        });
        
        var data = await response.json();
@@ -539,11 +582,8 @@
      async function get_con_sug(){
        
        var response =  await fetch(SERVER_URL + "/get_con_sug", {
-         headers: {
-           "Content-Type": "application/json",
-         },
          method: "POST",
-         
+         mode: "cors",
        });
        
        var data = await response.json();
@@ -563,8 +603,7 @@
          placeholder:"Select Concept ID"
          });
        
-     }
-      
+     }      
 
       function get_data() {
         $.ajax(SERVER_URL + '/get_data', {
@@ -588,6 +627,7 @@
               else{
                 $("#buttondrugs").attr("disabled", true);
                 $("#loadbtn").attr("disabled", true);
+                alert("No result, Please check your filtering words!");
               }
               display_data(res)
             },
@@ -737,6 +777,22 @@
 
       $('.example-concept-select').change(function() {
         flt_data['flt_co'] = this.value;
+        console.log(flt_data)
+        get_data()
+        
+        //display_data(filter_data_type(this.value))
+      });
+
+      $('.example-drug_category-select').change(function() {
+        flt_data['flt_dc'] = this.value;
+        console.log(flt_data)
+        get_data()
+        
+        //display_data(filter_data_type(this.value))
+      });
+
+      $('.example-condition_category-select').change(function() {
+        flt_data['flt_cc'] = this.value;
         console.log(flt_data)
         get_data()
         
@@ -1913,6 +1969,10 @@
         document.getElementsByClassName('p-result')[0].textContent = "Showing "+(elements.length-1).toString()+" results"
         document.getElementsByClassName('cards-main')[0].innerHTML = ''
         console.log(elements)
+        if (elements.length-1 == 0) {
+          alert("No result, Please check your filtering words!");
+          return;
+        }
         var lmt = elements.length
         if (flt_data['flt_limit'] == 0) {
 
@@ -1932,19 +1992,7 @@
           <h5 class="card-title">`+element['title']+`</h5></a>
 
           <div class="attrs">
-            `
-            for (a = 0; a < elements[elements.length - 1]['flt_co'].length; a++){
-              //console.log(elements[elements.length - 1]['flt_co'][a])
-              html += `<div class="db-cols badge badge-success"><a style="color:white;" href="https://athena.ohdsi.org/search-terms/terms/`+elements[elements.length - 1]['flt_co'][a].toString()+`">`+elements[elements.length - 1]['flt_co'][a].toString()+`</a></div>`
-            }
-
-            for (m = 0; m < elements[elements.length - 1]['flt_mesh'].length; m++){
-              html += `<div class="db-cols badge badge-success">`+elements[elements.length - 1]['flt_mesh'][m]+`</div>`
-            }
-            
-            html +=
-            `
-            <div class="db-cols badge badge-warning">`+element['date_pub']+`</div>
+           <div class="db-cols badge badge-warning">`+element['date_pub']+`</div>
             <div class="db-cols badge badge-danger">`+element['study_design']+`</div>
             <div class="db-cols badge badge-info">`+element['data_type']+`</div>
             </div>
@@ -2042,6 +2090,15 @@ function display_plots () {
   var dataPoints_condition = [{
     x: Object.keys(res_plots_data['n_condition']).length, y: 100, label: "number of searched resutls", indexLabel: res.length.toString()
   }]
+  var dataPoints_drugCategory = [{
+    x: Object.keys(res_plots_data['n_drugCategory']).length, y: 100, label: "number of searched resutls", indexLabel: res.length.toString()
+  }]
+  var dataPoints_conditionCategory = [{
+    x: Object.keys(res_plots_data['n_conditionCategory']).length, y: 100, label: "number of searched resutls", indexLabel: res.length.toString()
+  }]
+  var dataPoints_pairs = [{
+    x: Object.keys(res_plots_data['n_pairs']).length, y: 100, label: "number of searched resutls", indexLabel: res.length.toString()
+  }]
   for (i = 0; i < Object.keys(res_plots_data['n_drug']).length; i++ ){
     dataPoints_drug.push({
       x: i,
@@ -2057,6 +2114,32 @@ function display_plots () {
       y: parseInt((res_plots_data['n_condition'][Object.keys(res_plots_data['n_condition'])[i]] * 100 / res.length).toString().split('.')[0]), 
       label: Object.keys(res_plots_data['n_condition'])[i],
       indexLabel: (res_plots_data['n_condition'][Object.keys(res_plots_data['n_condition'])[i]]).toString()
+    });
+  }
+  //console.log(dataPoints_condition)
+  for (i = 0; i < Object.keys(res_plots_data['n_drugCategory']).length; i++ ){
+    dataPoints_drugCategory.push({
+      x: i,
+      y: parseInt((res_plots_data['n_drugCategory'][Object.keys(res_plots_data['n_drugCategory'])[i]] * 100 / res.length).toString().split('.')[0]), 
+      label: Object.keys(res_plots_data['n_drugCategory'])[i],
+      indexLabel: (res_plots_data['n_drugCategory'][Object.keys(res_plots_data['n_drugCategory'])[i]]).toString()
+    });
+  }
+  //console.log(dataPoints_drug)
+  for (i = 0; i < Object.keys(res_plots_data['n_conditionCategory']).length; i++ ){
+    dataPoints_conditionCategory.push({
+      x: i,
+      y: parseInt((res_plots_data['n_conditionCategory'][Object.keys(res_plots_data['n_conditionCategory'])[i]] * 100 / res.length).toString().split('.')[0]), 
+      label: Object.keys(res_plots_data['n_conditionCategory'])[i],
+      indexLabel: (res_plots_data['n_conditionCategory'][Object.keys(res_plots_data['n_conditionCategory'])[i]]).toString()
+    });
+  }
+  for (i = 0; i < Object.keys(res_plots_data['n_pairs']).length; i++ ){
+    dataPoints_pairs.push({
+      x: i,
+      y: parseInt((res_plots_data['n_pairs'][Object.keys(res_plots_data['n_pairs'])[i]] * 100 / res.length).toString().split('.')[0]), 
+      label: Object.keys(res_plots_data['n_pairs'])[i],
+      indexLabel: (res_plots_data['n_pairs'][Object.keys(res_plots_data['n_pairs'])[i]]).toString()
     });
   }
   //console.log(dataPoints_condition)
@@ -2122,6 +2205,99 @@ function display_plots () {
                     }]
                   };
                   $("#chartContainer_condition").CanvasJSChart(options);
+  options = {
+                  animationEnabled: true,
+                  title: {
+                    text: "Drug Category Frequency",                
+                    fontColor: "Peru"
+                  },	
+                  axisY: {
+                    tickThickness: 0,
+                    lineThickness: 0,
+                    valueFormatString: " ",
+                    gridThickness: 0                    
+                  },
+                  axisX: {
+                    tickThickness: 0,
+                    lineThickness: 0,
+                    labelFontSize: 18,
+                    labelFontColor: "Peru"				
+                  },
+                  data: [{
+                    indexLabelFontSize: 18,
+                    toolTipContent: "<span style=\"color:#62C9C3\">{indexLabel}:</span> <span style=\"color:#CD853F\"><strong>{y}</strong></span>",
+                    indexLabelPlacement: "inside",
+                    indexLabelFontColor: "purple",
+                    indexLabelFontWeight: 600,
+                    indexLabelFontFamily: "Verdana",
+                    color: "#62C9C3",
+                    type: "bar",
+                    dataPoints: dataPoints_drugCategory
+                    }]
+                  };
+                  $("#chartContainer_drugCategory").CanvasJSChart(options);
+  options = {
+                  animationEnabled: true,
+                  title: {
+                    text: "Condition Category Frequency",                
+                    fontColor: "Peru"
+                  },	
+                  axisY: {
+                    tickThickness: 0,
+                    lineThickness: 0,
+                    valueFormatString: " ",
+                    gridThickness: 0                    
+                  },
+                  axisX: {
+                    tickThickness: 0,
+                    lineThickness: 0,
+                    labelFontSize: 18,
+                    labelFontColor: "Peru"				
+                  },
+                  data: [{
+                    indexLabelFontSize: 18,
+                    toolTipContent: "<span style=\"color:#62C9C3\">{indexLabel}:</span> <span style=\"color:#CD853F\"><strong>{y}</strong></span>",
+                    indexLabelPlacement: "inside",
+                    indexLabelFontColor: "purple",
+                    indexLabelFontWeight: 600,
+                    indexLabelFontFamily: "Verdana",
+                    color: "#62C9C3",
+                    type: "bar",
+                    dataPoints: dataPoints_conditionCategory
+                    }]
+                  };
+                  $("#chartContainer_conditionCategory").CanvasJSChart(options);
+  options = {
+                  animationEnabled: true,
+                  title: {
+                    text: "Condition-Drug pairs Frequency",                
+                    fontColor: "Peru"
+                  },	
+                  axisY: {
+                    tickThickness: 0,
+                    lineThickness: 0,
+                    valueFormatString: " ",
+                    gridThickness: 0                    
+                  },
+                  axisX: {
+                    tickThickness: 0,
+                    lineThickness: 0,
+                    labelFontSize: 18,
+                    labelFontColor: "Peru"				
+                  },
+                  data: [{
+                    indexLabelFontSize: 18,
+                    toolTipContent: "<span style=\"color:#62C9C3\">{indexLabel}:</span> <span style=\"color:#CD853F\"><strong>{y}</strong></span>",
+                    indexLabelPlacement: "inside",
+                    indexLabelFontColor: "purple",
+                    indexLabelFontWeight: 600,
+                    indexLabelFontFamily: "Verdana",
+                    color: "#62C9C3",
+                    type: "bar",
+                    dataPoints: dataPoints_pairs
+                    }]
+                  };
+                  $("#chartContainer_pairs").CanvasJSChart(options);
                   modal.style.display = "block";
                   
 }
