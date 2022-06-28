@@ -56,7 +56,7 @@
   margin: auto;
   padding: 0;
   border: 1px solid #888;
-  width: 80%;
+  width: 95%;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
   -webkit-animation-name: animatetop;
   -webkit-animation-duration: 0.4s;
@@ -1920,20 +1920,30 @@
           lmt = flt_data['flt_limit']
         }
         
+        var html = ''
         for (i = 0; i < lmt - 1; i++){
           element = elements[i]
-            document.getElementsByClassName('cards-main')[0].innerHTML += 
+            html += 
           `
           <div class="card card-`+i+`">
             <a style="color:black;" href="`+element['pm_link']+`" target="_blank">
             <div class="card-top"><p class="card-top-date badge badge-primary" >`+element['journal']+`</p></div>
         <div class="card-body">
-          <h5 class="card-title">`+element['title']+`</h5>
+          <h5 class="card-title">`+element['title']+`</h5></a>
 
           <div class="attrs">
+            `
+            for (a = 0; a < elements[elements.length - 1]['flt_co'].length; a++){
+              //console.log(elements[elements.length - 1]['flt_co'][a])
+              html += `<div class="db-cols badge badge-success"><a style="color:white;" href="https://athena.ohdsi.org/search-terms/terms/`+elements[elements.length - 1]['flt_co'][a].toString()+`">`+elements[elements.length - 1]['flt_co'][a].toString()+`</a></div>`
+            }
+
+            for (m = 0; m < elements[elements.length - 1]['flt_mesh'].length; m++){
+              html += `<div class="db-cols badge badge-success">`+elements[elements.length - 1]['flt_mesh'][m]+`</div>`
+            }
             
-            <div class="db-cols badge badge-success"><a style="color:white;"href="https://athena.ohdsi.org/search-terms/terms/`+element['concept_id']+`">`+element['concept_id']+`</a></div>
-            <div class="db-cols badge badge-success">`+element['mesh']+`</div>
+            html +=
+            `
             <div class="db-cols badge badge-warning">`+element['date_pub']+`</div>
             <div class="db-cols badge badge-danger">`+element['study_design']+`</div>
             <div class="db-cols badge badge-info">`+element['data_type']+`</div>
@@ -1948,12 +1958,36 @@
             <div class="data-points" style="margin:1%;">
               
               <div class="point-1">
-                <div class="point"><strong class= "db-cols badge badge-success">`+element['domain']+`</strong>`+element['domain']+`</div>
-                <!--
-              <div class="point"><strong class="db-cols badge badge-info">Drug </strong>`+element.drug_+`</div>
-              <div class="point"><strong class="db-cols badge badge-warning">Procedures </strong>`+element.procedures_+`</div>
+                <div class="point"><strong class= "db-cols badge badge-success">Condition</strong><br>`;
+                  for (j = 0; j < element['condition'].length; j++){
+                    html += `<div>`+element['condition'][j]['mesh']+ `<a href="https://athena.ohdsi.org/search-terms/terms/`+element['condition'][j]['concept_id']+`">`+element['condition'][j]['concept_id']+`</a></div>`
+                  }
+                  html +=
+                `
+              </div>
+
+              <div class="point"><strong class="db-cols badge badge-info">Drug </strong>`
+                for (j = 0; j < element['drug'].length; j++){
+                    html += `<div>`+element['drug'][j]['mesh']+ `<a href="https://athena.ohdsi.org/search-terms/terms/`+element['drug'][j]['concept_id']+`">`+element['drug'][j]['concept_id']+`</a></div>`
+                  }
+                  html +=
+              `
+              </div>
+              <div class="point"><strong class="db-cols badge badge-warning">Procedures </strong>`
+                for (j = 0; j < element['procedure'].length; j++){
+                    html += `<div>`+element['procedure'][j]['mesh']+ `<a href="https://athena.ohdsi.org/search-terms/terms/`+element['procedure'][j]['concept_id']+`">`+element['procedure'][j]['concept_id']+`</a></div>`
+                  }
+                  html +=
+                  `
+              </div>
+              <div class="point"><strong class="db-cols badge badge-warning">measurement </strong>`
+                for (j = 0; j < element['measurement'].length; j++){
+                    html += `<div>`+element['measurement'][j]['mesh']+ `<a href="https://athena.ohdsi.org/search-terms/terms/`+element['measurement'][j]['concept_id']+`">`+element['measurement'][j]['concept_id']+`</a></div>`
+                  }
+                  html +=
+                `
+              </div>
                 </div>
-                !-->
                 <div class="point-1">
                 <div class="point"><strong>Study population: </strong>Not available yet.</div>
               <div class="point"><strong>Study Design: </strong>`+element['study_design']+`</div>
@@ -1968,6 +2002,7 @@
       </a>
     </div>`
         }
+        document.getElementsByClassName('cards-main')[0].innerHTML = html
         document.getElementsByClassName('preload')[0].style.display = "none"
         
       }   

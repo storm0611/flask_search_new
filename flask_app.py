@@ -56,7 +56,6 @@ def insert_data(_table, _what, _where, _wval, _where1='', _wval1='', _where2='',
         id = len(result)
     return id
 
-
 def insert_data_connect(_table, _val1, _val2):
     insert_query = insert_query = "INSERT INTO " + \
         _table + " VALUES (" + _val1 + ', ' + _val2 + ");"
@@ -89,16 +88,22 @@ def add_article():
             'journals', 'id', 'journal', "'" + str(journal) + "'")
         print(journal_id)
 
-        insert_query = "INSERT INTO articles (pm_id, pm_link, date_pub, abstract, title, journal_id, category_name) VALUES (" + \
-            str(pm_id) + ", '" + str(pm_link) + "', '" + date_pub + "', '" + \
-            abstract + "', '" + title + "', " + str(journal_id) + ", '" + category_name + "');"
-        # print(insert_query)
-        Pointer.execute(insert_query)
-        connection.commit()
-        select_query = "SELECT id FROM articles;"
+        select_query = "SELECT id FROM articles WHERE pm_id=" + str(pm_id)
         Pointer.execute(select_query)
-        result = Pointer.fetchall()
-        article_id = len(result)
+        res = Pointer.fetchall()
+        if len(res):
+            article_id = res[0][0]
+        else:
+            insert_query = "INSERT INTO articles (pm_id, pm_link, date_pub, abstract, title, journal_id, category_name) VALUES (" + \
+                str(pm_id) + ", '" + str(pm_link) + "', '" + date_pub + "', '" + \
+                abstract + "', '" + title + "', " + str(journal_id) + ", '" + category_name + "');"
+            # print(insert_query)
+            Pointer.execute(insert_query)
+            connection.commit()
+            select_query = "SELECT id FROM articles;"
+            Pointer.execute(select_query)
+            result = Pointer.fetchall()
+            article_id = len(result)
         print(article_id)
 
         study_design_id = insert_data(
@@ -594,8 +599,7 @@ def display_get():
     if request.method == "POST":
         # print(request.get_json())
         flt_mesh = request.get_json()['flt_mesh'].split(',')
-        print(flt_mesh)
-        # flt_co = request.get_json()['flt_co']
+        flt_co = []
         flt_sd = request.get_json()['flt_sd']
         flt_dt = request.get_json()['flt_dt']
         flt_date = request.get_json()['flt_date']
@@ -619,7 +623,9 @@ def display_get():
         sql_query = ""
         for i in range(len(flt_mesh)):
             try:
-                flt_co = int64(flt_mesh[i])
+                # print(flt_mesh[i])
+                flt_co.append(int(flt_mesh[i]))
+                # print(flt_co)
                 whe = 'concept_id'
                 val = flt_mesh[i]
             except:
@@ -628,7 +634,7 @@ def display_get():
             if i > 0:
                 sql_query += ", "
             else:
-                sql_query += "select article_id from meshes_connect inner join (select id as mh_id from mesh where " + whe + " in ("
+                sql_query += "select distinct article_id from meshes_connect inner join (select id as mh_id from mesh where " + whe + " in ("
             sql_query += (val)
         if sql_query != "":
             sql_query += ")) as mh on mh.mh_id=meshes_connect.mesh_id"
@@ -643,7 +649,7 @@ def display_get():
             if i > 0:
                 sql_query += ", "
             else:
-                sql_query += "select article_id from meshes_connect inner join (select id as mh_id from mesh where domain in ("
+                sql_query += "select distinct article_id from meshes_connect inner join (select id as mh_id from mesh where domain in ("
             sql_query += ("'" + flt_dm[i] + "'")
         if sql_query != "":
             sql_query += ")) as mh on mh.mh_id=meshes_connect.mesh_id"
@@ -674,7 +680,7 @@ def display_get():
             if i > 0:
                 sql_query += ", "
             else:
-                sql_query += "select article_id from study_design_connect inner join (select id as sd_id from study_design where study_design in ("
+                sql_query += "select distinct article_id from study_design_connect inner join (select id as sd_id from study_design where study_design in ("
             sql_query += ("'" + flt_sd[i] + "'")
         if sql_query != "":
             sql_query += ")) as sd on sd.sd_id=study_design_connect.study_design_id;"
@@ -691,7 +697,7 @@ def display_get():
             if i > 0:
                 sql_query += ", "
             else:
-                sql_query += "select article_id from data_type_connect inner join (select id as dt_id from data_type where data_type in ("
+                sql_query += "select distinct article_id from data_type_connect inner join (select id as dt_id from data_type where data_type in ("
             sql_query += ("'" + flt_dt[i] + "'")
         if sql_query != "":
             sql_query += ")) as dt on dt.dt_id=data_type_connect.data_type_id"
@@ -709,7 +715,7 @@ def display_get():
             if i > 0:
                 sql_query += ", "
             else:
-                sql_query += "select id from articles where date_pub in ("
+                sql_query += "select distinct id from articles where date_pub in ("
             sql_query += ("'" + flt_date[i] + "'")
         if sql_query != "":
             sql_query += ")"
@@ -724,7 +730,7 @@ def display_get():
             if i > 0:
                 sql_query += ", "
             else:
-                sql_query += "select article_id from geography_connect inner join (select id as dt_id from geography where country in ("
+                sql_query += "select distinct article_id from geography_connect inner join (select id as dt_id from geography where country in ("
             sql_query += ("'" + flt_geo[i] + "'")
         if sql_query != "":
             sql_query += ")) as dt on dt.dt_id=geography_connect.region_id"
@@ -742,7 +748,7 @@ def display_get():
             if i > 0:
                 sql_query += ", "
             else:
-                sql_query += "select article_id from vocabs_connect inner join (select id as dt_id from vocabularies where omop_vocab in ("
+                sql_query += "select distinct article_id from vocabs_connect inner join (select id as dt_id from vocabularies where omop_vocab in ("
             sql_query += ("'" + flt_vb[i] + "'")
         if sql_query != "":
             sql_query += ")) as dt on dt.dt_id=vocabs_connect.vocab_id"
@@ -760,7 +766,7 @@ def display_get():
             if i > 0:
                 sql_query += ", "
             else:
-                sql_query += "select id from articles inner join (select id as dt_id from journals where journal in ("
+                sql_query += "select distinct id from articles inner join (select id as dt_id from journals where journal in ("
             sql_query += ("'" + flt_jo[i] + "'")
         if sql_query != "":
             sql_query += ")) as dt on dt.dt_id=articles.journal_id"
@@ -790,7 +796,9 @@ def display_get():
                             res_id + ")) as jo on jo.journal_id=journals.id order by ranking asc"
             Pointer.execute(sql_query)
             res_journal_a_id = Pointer.fetchall()
+            # print(res_journal_a_id)
             for j in res_journal_a_id:
+                # print(j)
                 res_journal = j[0]
                 
                 sql_query = "select pm_link from articles where id in (" + str(j[1]) + ")"
@@ -820,33 +828,58 @@ def display_get():
                 try:
                     res_data_type = Pointer.fetchall()[0][0]
                 except:
-                    print(sql_query)
-                    print(Pointer.fetchall())
+                    # print(sql_query)
+                    # print(Pointer.fetchall())
                     res_data_type = ''
                 
-                sql_query = "select mesh, concept_id, domain from mesh inner join (select * from meshes_connect where article_id in (" + \
+                sql_query = "select distinct mesh, concept_id, domain from mesh inner join (select * from meshes_connect where article_id in (" + \
                     str(j[1]) + ")) as mh on mh.mesh_id=mesh.id"
                 Pointer.execute(sql_query)
                 res_mesh_m_c_d = Pointer.fetchall()
-                try:
-                    res_mesh = res_mesh_m_c_d[0][0]
-                except:
-                    print(sql_query)
-                    print(Pointer.fetchall())
-                    res_mesh = ''
-                try:
-                    res_concept_id = res_mesh_m_c_d[0][1]
-                except:
-                    print(sql_query)
-                    print(Pointer.fetchall())
-                    res_concept_id = ''
-                try:
-                    res_domain = res_mesh_m_c_d[0][2]
-                except:
-                    print(sql_query)
-                    print(Pointer.fetchall())
-                    res_domain = ''
-                
+                # print(res_mesh_m_c_d)
+                res_mesh = []
+                res_concept_id = []
+                res_Condition = []
+                res_Drug = []
+                res_Procedure = []
+                res_Measurement = []
+                for k in res_mesh_m_c_d:
+                    # print(k)
+                    res_mesh.append(k[0])
+                    res_concept_id.append(k[1])
+                    if k[2] == "Condition":
+                        res_Condition.append({
+                            'mesh': k[0],
+                            'concept_id': k[1]
+                        })
+                    else:
+                        if k[2] == "Drug":
+                            res_Drug.append({
+                                'mesh': k[0],
+                                'concept_id': k[1]
+                            })
+                        else:
+                            if k[2] == "Procedure":
+                                res_Procedure.append({
+                                    'mesh': k[0],
+                                    'concept_id': k[1]
+                                })
+                            else:
+                                if k[2] == "Measurement":
+                                    res_Measurement.append({
+                                        'mesh': k[0],
+                                        'concept_id': k[1]
+                                    })
+                                    
+                    # instr = eval("res_{0}".format(k[2]))
+                    # print(instr)
+                    # instr.append(k[0])
+
+                # print("condition: ", res_Condition)
+                # print("drug: ", res_Drug)
+                # print("procedure: ", res_Procedure)
+                # print("measurement: ", res_Measurement)
+                # print("mesh: ", res_mesh)
                 results.append({
                     'pm_link': res_pm_link,
                     'title': res_title,
@@ -856,10 +889,21 @@ def display_get():
                     'data_type': res_data_type,
                     'mesh': res_mesh,
                     'concept_id': res_concept_id,
-                    'domain': res_domain,
+                    'condition': res_Condition,
+                    'drug': res_Drug,
+                    'procedure': res_Procedure,
+                    'measurement': res_Measurement,
                     'journal': res_journal
                 })
+            for k in flt_mesh:
+                try:
+                    ss = int(k)
+                    flt_mesh.remove(k)
+                except:
+                    ss = ''
             results.append({
+                'flt_mesh': flt_mesh,
+                'flt_co': flt_co,
                 'articles_id': res_id    
             })
         else:
