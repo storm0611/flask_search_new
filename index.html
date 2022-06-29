@@ -239,7 +239,7 @@
         <div class="col-md-12" id="chartContainer_conditionCategory" style="height: 600px"></div>
       </div>
       <div class="row">
-        <div class="col-md-12" id="chartContainer_pairs" style="height: 600px"></div>
+        <div class="col-md-12" id="chartContainer_pairs" style="height: 3 000px "></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -609,8 +609,11 @@
         $.ajax(SERVER_URL + '/get_data', {
             type: "POST",
             data: JSON.stringify(flt_data),
+            async: true,
+            crosDomain: true,
             headers: {
               "Content-Type": "application/json",
+              "Access-Control-Allow-Origin":"*"
             },
             beforeSend: function() {
             // setting a timeout
@@ -2139,10 +2142,10 @@ function display_plots () {
       x: i,
       y: parseInt((res_plots_data['n_pairs'][Object.keys(res_plots_data['n_pairs'])[i]] * 100 / res.length).toString().split('.')[0]), 
       label: Object.keys(res_plots_data['n_pairs'])[i],
-      indexLabel: (res_plots_data['n_pairs'][Object.keys(res_plots_data['n_pairs'])[i]]).toString()
+      indexLabel: (res_plots_data['n_pairs'][Object.keys(res_plots_data['n_pairs'])[i]]).toString(),
     });
   }
-  //console.log(dataPoints_condition)
+  //console.log(dataPoints_pairs)
   var options = {
                   animationEnabled: true,
                   title: {
@@ -2267,10 +2270,10 @@ function display_plots () {
                     }]
                   };
                   $("#chartContainer_conditionCategory").CanvasJSChart(options);
-  options = {
+            options = {
                   animationEnabled: true,
                   title: {
-                    text: "Condition-Drug pairs Frequency",                
+                    text: "Condition - Drug mesh Frequency",                
                     fontColor: "Peru"
                   },	
                   axisY: {
@@ -2297,6 +2300,7 @@ function display_plots () {
                     dataPoints: dataPoints_pairs
                     }]
                   };
+                  console.log(options)
                   $("#chartContainer_pairs").CanvasJSChart(options);
                   modal.style.display = "block";
                   

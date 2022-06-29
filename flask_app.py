@@ -695,11 +695,11 @@ def display_plots_get():
                         except:
                             n_conditionCategory[i[2]] = 1
             
-            condition_list = list(n_conditionCategory)
-            drug_list = list(n_drugCategory)
+            condition_list = list(n_condition)
+            drug_list = list(n_drug)
             for i in condition_list:
                 for j in drug_list:
-                    sql_query = "select distinct article_id from meshes_connect inner join (select id as mh_id from mesh where category_name in (" +\
+                    sql_query = "select article_id from meshes_connect inner join (select id as mh_id from mesh where mesh in (" +\
                                 "'" + i + "', " + "'" + j + \
                         "')) as mh on mh.mh_id=meshes_connect.mesh_id GROUP BY article_id HAVING COUNT(*) > 1"
                     Pointer.execute(sql_query)
