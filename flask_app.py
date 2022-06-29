@@ -1,32 +1,20 @@
-from ctypes.wintypes import POINT
-from email.errors import InvalidMultipartContentTransferEncodingDefect
-import json
-from select import select
-from unittest import result
-from urllib import response
-
-from urllib.robotparser import RequestRate
-from flask_restful import reqparse, Api, Resource , request
 from flaskext.mysql import MySQL
-from flask_cors import CORS, cross_origin
-from flask import Flask, jsonify, render_template, request, send_file, make_response, abort, session
-from numpy import int64, ndarray, result_type, true_divide
-# from plots_code import barchart_diseases
+from flask_cors import CORS
+from flask import Flask, jsonify, request
 import pymysql
-from pymysql import Error
 import pandas as pd
 import logging
 import numpy as np
 
 app = Flask(__name__)
-# app.config['MYSQL_DATABASE_USER'] = 'nadiakey'
-# app.config['MYSQL_DATABASE_PASSWORD'] = 'nadiakey@@@@@@@@'
-# app.config['MYSQL_DATABASE_DB'] = 'nadiakey$mydb'
-# app.config['MYSQL_DATABASE_HOST'] = 'nadiakey.mysql.pythonanywhere-services.com'
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = ''
-app.config['MYSQL_DATABASE_DB'] = 'mydb'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_USER'] = 'nadiakey'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'nadiakey@@@@@@@@'
+app.config['MYSQL_DATABASE_DB'] = 'nadiakey$mydb'
+app.config['MYSQL_DATABASE_HOST'] = 'nadiakey.mysql.pythonanywhere-services.com'
+# app.config['MYSQL_DATABASE_USER'] = 'root'
+# app.config['MYSQL_DATABASE_PASSWORD'] = ''
+# app.config['MYSQL_DATABASE_DB'] = 'mydb'
+# app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 
 cors = CORS(app)
 MySql = MySQL()
@@ -673,7 +661,7 @@ def display_plots_get():
         # print(request.get_json())
         a_id = request.get_json()['articles_id']
         # print(a_id)
-        sql_query = "select mesh, domain, category_name from mesh inner join (select * from meshes_connect where article_id in (" + a_id + ")) as mh on mh.mesh_id=mesh.id;"
+        sql_query = "select mesh, domain, category_name from mesh inner join (select distinct * from meshes_connect where article_id in (" + a_id + ")) as mh on mh.mesh_id=mesh.id;"
         Pointer.execute(sql_query)
         res = Pointer.fetchall()
         # print(res)
@@ -785,13 +773,13 @@ def display_get():
                 whe = 'mesh'
                 val = "'" + flt_mesh[i] + "'"
             if i > 0:
-                sql_query += ", "
+                sql_query += " or "
             else:
-                sql_query += "select distinct article_id from meshes_connect inner join (select id as mh_id from mesh where " + whe + " in ("
-            sql_query += (val)
+                sql_query += "select article_id from meshes_connect inner join (select id as mh_id from mesh where "
+            sql_query += whe + "=" + val
         if sql_query != "":
-            sql_query += ")) as mh on mh.mh_id=meshes_connect.mesh_id"
-            # print(sql_query)
+            sql_query += ") as mh on mh.mh_id=meshes_connect.mesh_id group by article_id having count(*) >= " + str(i + 1)
+            print(sql_query)
             Pointer.execute(sql_query)
             res_mh = Pointer.fetchall()
             # print(res_mh)

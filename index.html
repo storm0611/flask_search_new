@@ -1968,8 +1968,13 @@
 
       function display_data(elements){
 
-        document.getElementsByClassName('p-result')[0].textContent = "Showing "+(elements.length-1).toString()+" results"
         document.getElementsByClassName('cards-main')[0].innerHTML = ''
+        if (elements.length == 0) {
+          document.getElementsByClassName('p-result')[0].textContent = "Showing "+(elements.length).toString()+" results"  
+        }
+        else {
+          document.getElementsByClassName('p-result')[0].textContent = "Showing "+(elements.length-1).toString()+" results"
+        }
         console.log(elements)
         if (elements.length-1 == 0) {
           alert("No result, Please check your filtering words!");
@@ -2010,7 +2015,7 @@
               <div class="point-1">
                 <div class="point"><strong class= "db-cols badge badge-success">Condition</strong><br>`;
                   for (j = 0; j < element['condition'].length; j++){
-                    html += `<div>`+element['condition'][j]['mesh']+ `<a href="https://athena.ohdsi.org/search-terms/terms/`+element['condition'][j]['concept_id']+`">`+element['condition'][j]['concept_id']+`</a></div>`
+                    html += `<div>`+element['condition'][j]['mesh']+ ` <a href="https://athena.ohdsi.org/search-terms/terms/`+element['condition'][j]['concept_id']+`">`+element['condition'][j]['concept_id']+`</a></div>`
                   }
                   html +=
                 `
@@ -2018,21 +2023,21 @@
 
               <div class="point"><strong class="db-cols badge badge-info">Drug </strong>`
                 for (j = 0; j < element['drug'].length; j++){
-                    html += `<div>`+element['drug'][j]['mesh']+ `<a href="https://athena.ohdsi.org/search-terms/terms/`+element['drug'][j]['concept_id']+`">`+element['drug'][j]['concept_id']+`</a></div>`
+                    html += `<div>`+element['drug'][j]['mesh']+ ` <a href="https://athena.ohdsi.org/search-terms/terms/`+element['drug'][j]['concept_id']+`">`+element['drug'][j]['concept_id']+`</a></div>`
                   }
                   html +=
               `
               </div>
               <div class="point"><strong class="db-cols badge badge-warning">Procedures </strong>`
                 for (j = 0; j < element['procedure'].length; j++){
-                    html += `<div>`+element['procedure'][j]['mesh']+ `<a href="https://athena.ohdsi.org/search-terms/terms/`+element['procedure'][j]['concept_id']+`">`+element['procedure'][j]['concept_id']+`</a></div>`
+                    html += `<div>`+element['procedure'][j]['mesh']+ ` <a href="https://athena.ohdsi.org/search-terms/terms/`+element['procedure'][j]['concept_id']+`">`+element['procedure'][j]['concept_id']+`</a></div>`
                   }
                   html +=
                   `
               </div>
               <div class="point"><strong class="db-cols badge badge-warning">measurement </strong>`
                 for (j = 0; j < element['measurement'].length; j++){
-                    html += `<div>`+element['measurement'][j]['mesh']+ `<a href="https://athena.ohdsi.org/search-terms/terms/`+element['measurement'][j]['concept_id']+`">`+element['measurement'][j]['concept_id']+`</a></div>`
+                    html += `<div>`+element['measurement'][j]['mesh']+ ` <a href="https://athena.ohdsi.org/search-terms/terms/`+element['measurement'][j]['concept_id']+`">`+element['measurement'][j]['concept_id']+`</a></div>`
                   }
                   html +=
                 `
@@ -2087,24 +2092,24 @@ btn.onclick = function() {
 function display_plots () {
   console.log(res_plots_data)
   var dataPoints_drug = [{
-    x: Object.keys(res_plots_data['n_drug']).length, y: 100, label: "number of searched resutls", indexLabel: res.length.toString()
+    x: Object.keys(res_plots_data['n_drug']).length, y: 100, label: "number of searched resutls", indexLabel: (res.length - 1).toString()
   }]
   var dataPoints_condition = [{
-    x: Object.keys(res_plots_data['n_condition']).length, y: 100, label: "number of searched resutls", indexLabel: res.length.toString()
+    x: Object.keys(res_plots_data['n_condition']).length, y: 100, label: "number of searched resutls", indexLabel: (res.length - 1).toString()
   }]
   var dataPoints_drugCategory = [{
-    x: Object.keys(res_plots_data['n_drugCategory']).length, y: 100, label: "number of searched resutls", indexLabel: res.length.toString()
+    x: Object.keys(res_plots_data['n_drugCategory']).length, y: 100, label: "number of searched resutls", indexLabel: (res.length - 1).toString()
   }]
   var dataPoints_conditionCategory = [{
-    x: Object.keys(res_plots_data['n_conditionCategory']).length, y: 100, label: "number of searched resutls", indexLabel: res.length.toString()
+    x: Object.keys(res_plots_data['n_conditionCategory']).length, y: 100, label: "number of searched resutls", indexLabel: (res.length - 1).toString()
   }]
   var dataPoints_pairs = [{
-    x: Object.keys(res_plots_data['n_pairs']).length, y: 100, label: "number of searched resutls", indexLabel: res.length.toString()
+    x: Object.keys(res_plots_data['n_pairs']).length, y: 100, label: "number of searched resutls", indexLabel: (res.length - 1).toString()
   }]
   for (i = 0; i < Object.keys(res_plots_data['n_drug']).length; i++ ){
     dataPoints_drug.push({
       x: i,
-      y: parseInt((res_plots_data['n_drug'][Object.keys(res_plots_data['n_drug'])[i]] * 100 / res.length).toString().split('.')[0]), 
+      y: parseInt((res_plots_data['n_drug'][Object.keys(res_plots_data['n_drug'])[i]] * 100 / (res.length - 1)).toString().split('.')[0]), 
       label: Object.keys(res_plots_data['n_drug'])[i],
       indexLabel: (res_plots_data['n_drug'][Object.keys(res_plots_data['n_drug'])[i]]).toString()
     });
@@ -2113,7 +2118,7 @@ function display_plots () {
   for (i = 0; i < Object.keys(res_plots_data['n_condition']).length; i++ ){
     dataPoints_condition.push({
       x: i,
-      y: parseInt((res_plots_data['n_condition'][Object.keys(res_plots_data['n_condition'])[i]] * 100 / res.length).toString().split('.')[0]), 
+      y: parseInt((res_plots_data['n_condition'][Object.keys(res_plots_data['n_condition'])[i]] * 100 / (res.length - 1)).toString().split('.')[0]), 
       label: Object.keys(res_plots_data['n_condition'])[i],
       indexLabel: (res_plots_data['n_condition'][Object.keys(res_plots_data['n_condition'])[i]]).toString()
     });
@@ -2122,7 +2127,7 @@ function display_plots () {
   for (i = 0; i < Object.keys(res_plots_data['n_drugCategory']).length; i++ ){
     dataPoints_drugCategory.push({
       x: i,
-      y: parseInt((res_plots_data['n_drugCategory'][Object.keys(res_plots_data['n_drugCategory'])[i]] * 100 / res.length).toString().split('.')[0]), 
+      y: parseInt((res_plots_data['n_drugCategory'][Object.keys(res_plots_data['n_drugCategory'])[i]] * 100 / (res.length - 1)).toString().split('.')[0]), 
       label: Object.keys(res_plots_data['n_drugCategory'])[i],
       indexLabel: (res_plots_data['n_drugCategory'][Object.keys(res_plots_data['n_drugCategory'])[i]]).toString()
     });
@@ -2131,7 +2136,7 @@ function display_plots () {
   for (i = 0; i < Object.keys(res_plots_data['n_conditionCategory']).length; i++ ){
     dataPoints_conditionCategory.push({
       x: i,
-      y: parseInt((res_plots_data['n_conditionCategory'][Object.keys(res_plots_data['n_conditionCategory'])[i]] * 100 / res.length).toString().split('.')[0]), 
+      y: parseInt((res_plots_data['n_conditionCategory'][Object.keys(res_plots_data['n_conditionCategory'])[i]] * 100 / (res.length - 1)).toString().split('.')[0]), 
       label: Object.keys(res_plots_data['n_conditionCategory'])[i],
       indexLabel: (res_plots_data['n_conditionCategory'][Object.keys(res_plots_data['n_conditionCategory'])[i]]).toString()
     });
@@ -2139,7 +2144,7 @@ function display_plots () {
   for (i = 0; i < Object.keys(res_plots_data['n_pairs']).length; i++ ){
     dataPoints_pairs.push({
       x: i,
-      y: parseInt((res_plots_data['n_pairs'][Object.keys(res_plots_data['n_pairs'])[i]] * 100 / res.length).toString().split('.')[0]), 
+      y: parseInt((res_plots_data['n_pairs'][Object.keys(res_plots_data['n_pairs'])[i]] * 100 / (res.length - 1)).toString().split('.')[0]), 
       label: Object.keys(res_plots_data['n_pairs'])[i],
       indexLabel: (res_plots_data['n_pairs'][Object.keys(res_plots_data['n_pairs'])[i]]).toString(),
     });
