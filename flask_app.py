@@ -1023,6 +1023,11 @@ def display_get():
                 Pointer.execute(sql_query)
                 res_study_design = Pointer.fetchall()[0][0]
                 
+                sql_query = "select country from (select * from geography_connect where article_id in (" + \
+                    str(j[1]) + ")) as sd_id inner join geography on sd_id.region_id=geography.id"
+                Pointer.execute(sql_query)
+                res_geography = Pointer.fetchall()[0][0]
+                
                 sql_query = "select data_type from (select * from data_type_connect where article_id in (" + \
                     str(j[1]) + ")) as dt_id inner join data_type on dt_id.data_type_id=data_type.id"
                 Pointer.execute(sql_query)
@@ -1094,7 +1099,8 @@ def display_get():
                     'drug': res_Drug,
                     'procedure': res_Procedure,
                     'measurement': res_Measurement,
-                    'journal': res_journal
+                    'journal': res_journal,
+                    'geography': res_geography
                 })
             for k in flt_mesh:
                 try:
