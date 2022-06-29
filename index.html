@@ -239,7 +239,7 @@
         <div class="col-md-12" id="chartContainer_conditionCategory" style="height: 600px"></div>
       </div>
       <div class="row">
-        <div class="col-md-12" id="chartContainer_pairs" style="height: 3 000px "></div>
+        <div class="col-md-12" id="chartContainer_pairs" style="height: 3000px "></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -251,8 +251,8 @@
     
 <script>
 
-      var SERVER_URL = 'http://localhost:5000';
-      //var SERVER_URL = 'http://Tandem7.pythonanywhere.com';
+      //var SERVER_URL = 'http://localhost:5000';
+      var SERVER_URL = 'http://nadiakey.pythonanywhere.com';
       var res = {}
       var res_plots_data = {}
       
@@ -609,11 +609,9 @@
         $.ajax(SERVER_URL + '/get_data', {
             type: "POST",
             data: JSON.stringify(flt_data),
-            async: true,
-            crosDomain: true,
             headers: {
+              "Accept": "application/json",
               "Content-Type": "application/json",
-              "Access-Control-Allow-Origin":"*"
             },
             beforeSend: function() {
             // setting a timeout
@@ -666,6 +664,7 @@
               'articles_id': res[res.length - 1]['articles_id']
             }),
             headers: {
+              "Accept": "application/json",
               "Content-Type": "application/json",
             },
             beforeSend: function() {

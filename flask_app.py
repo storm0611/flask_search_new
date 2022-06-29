@@ -19,10 +19,10 @@ import logging
 import numpy as np
 
 app = Flask(__name__)
-# app.config['MYSQL_DATABASE_USER'] = 'Tandem7'
-# app.config['MYSQL_DATABASE_PASSWORD'] = 'shani@@@@143'
-# app.config['MYSQL_DATABASE_DB'] = 'Tandem7$articles_db'
-# app.config['MYSQL_DATABASE_HOST'] = 'Tandem7.mysql.pythonanywhere-services.com'
+# app.config['MYSQL_DATABASE_USER'] = 'nadiakey'
+# app.config['MYSQL_DATABASE_PASSWORD'] = 'nadiakey@@@@@@@@'
+# app.config['MYSQL_DATABASE_DB'] = 'nadiakey$mydb'
+# app.config['MYSQL_DATABASE_HOST'] = 'nadiakey.mysql.pythonanywhere-services.com'
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
 app.config['MYSQL_DATABASE_DB'] = 'mydb'
@@ -181,6 +181,11 @@ def add_article():
     data_type = json_data['data_type']
     domain_id = json_data['domain']
     category_name = json_data['category_name']
+    try:
+        n_participants = int(float(json_data['participants']))
+    except:
+        n_participants = 0
+    geography = json_data['geography']
     
     if pm_id and pm_link and date_pub and journal and abstract and title and mesh and concept_id and study_design and data_type and domain_id and request.method == 'POST':
         journal_id = insert_data(
@@ -193,9 +198,9 @@ def add_article():
         if len(res):
             article_id = res[0][0]
         else:
-            insert_query = "INSERT INTO articles (pm_id, pm_link, date_pub, abstract, title, journal_id) VALUES (" + \
+            insert_query = "INSERT INTO articles (pm_id, pm_link, date_pub, abstract, title, journal_id, n_participant) VALUES (" + \
                 str(pm_id) + ", '" + str(pm_link) + "', '" + date_pub + "', '" + \
-                abstract + "', '" + title + "', " + str(journal_id) + ");"
+                abstract + "', '" + title + "', " + str(journal_id) + ", " + str(n_participants) + ");"
             # print(insert_query)
             Pointer.execute(insert_query)
             connection.commit()
@@ -211,6 +216,13 @@ def add_article():
 
         insert_data_connect('study_design_connect', str(
             article_id), str(study_design_id))
+
+        geography_id = insert_data(
+            'geography', 'id', 'country', "'" + geography + "'")
+        print(geography_id)
+
+        insert_data_connect('geography_connect', str(
+            article_id), str(geography_id))
 
         data_type_id = insert_data(
             'data_type', 'id', 'data_type', "'" + data_type + "'")
@@ -1111,6 +1123,7 @@ def display_get():
             results = []   
             
         response = jsonify(results)
+        response.status_code = 200
         return response
     if request.method == "GET":
         results = {'processed': 'GET is not supported'}

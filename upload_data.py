@@ -23,14 +23,14 @@ def read_csv_data():
     # can you please show me this .csv file or put this csv file in same path of sccript?
     # yeah let me search for it..
     # you can also set it's path to csv file
-    data = pandas.read_csv('final_df_sample_noindex_with_domain.csv',
+    data = pandas.read_csv('final_june29.csv',
                            sep=',', encoding='utf-8', encoding_errors='replace')
     return data # and here it's returning all the readed data from csv file , I am using pandas for reading file
 
 def upload_data():
         csv_data = read_csv_data()
        
-        for i in range(562, len(csv_data)):
+        for i in range(len(csv_data)):
 
             # data = {}    
         
@@ -60,7 +60,9 @@ def upload_data():
                 'mesh': str(csv_data['mesh'][i]),
                 'concept_id': str(csv_data['concept_id_1'][i]),
                 'domain': str(csv_data['domain_id'][i]),
-                'category_name': str(csv_data['category_name'][i])
+                'category_name': str(csv_data['category_name'][i]),
+                'participants': str(csv_data['n_participants'][i]),
+                'geography': str(csv_data['geography'][i])
             })
             if (res.status_code == 200):
                 print(res.text + ": "+str(i) + " out of {}".format(len(csv_data['title'])))
