@@ -19,11 +19,11 @@
 *.rar
 *.tar
 *.zip
+*.mp4
 
 # Logs and databases #
 ######################
 *.log
-*.sql
 *.sqlite
 
 # OS generated files #

@@ -1,66 +1,54 @@
-
-
-
-
-
-
-
-
 .multiselect-container>li>a>label {
     padding: 4px 20px 3px 20px;
-  }
-.vscomp-ele{
+}
+
+.vscomp-ele {
     max-width: 100% !important;
 }
 
-
-
-
-
-
-
-.top-nav{
+.top-nav {
     display: flex;
     justify-content: space-between;
     margin: 1.5%;
     margin-top: 2%;
-    
 }
-.data-points{
+
+.data-points {
     display: flex;
     flex-grow: 2;
     flex-direction: row;
     flex-wrap: wrap;
 }
 
-.point-1{
+.point-1 {
     display: flex;
-    flex: 1 ;
-    flex-wrap: wrap ;
+    flex: 1;
+    flex-wrap: wrap;
     flex-grow: 1;
-    
     flex-direction: column;
 }
-.logo-part{
+
+.logo-part {
     display: flex;
     flex: 1;
 }
-.logo{
+
+.logo {
     margin-top: -15px;
     max-width: 300px;
     height: 50px;
 }
 
-.nav-text{
+.nav-text {
     color: rgb(195, 194, 194);
 }
 
-.nav-about{
+.nav-about {
     color: rgb(195, 194, 194);
     cursor: pointer;
 }
 
-.main-content{
+.main-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -69,26 +57,29 @@
     margin-right: 13%;
     margin-top: 5%;
 }
-.search-filter{
+
+.search-filter {
     display: flex;
     width: 100% !important;
     flex-grow: 3;
     flex-direction: column;
-    
 }
-#cars{
+
+#cars {
     width: 100%;
 }
-.search-card{
+
+.search-card {
     border: 1px solid rgb(224, 224, 224);
     width: 100%;
     padding: 2%;
 }
 
-.amsify-suggestags-input-area{
+.amsify-suggestags-input-area {
     border-radius: 5px;
 }
-.results-label{
+
+.results-label {
     display: flex;
     width: 100%;
     justify-content: flex-end;
@@ -96,68 +87,69 @@
     color: rgb(138, 141, 141);
     font-size: smaller;
 }
-.amsify-suggestags-area{
+
+.amsify-suggestags-area {
     width: 100%;
-    
 }
-.amsify-suggestags-input{
+
+.amsify-suggestags-input {
     max-width: 1000px !important;
 }
-.amsify-suggestags-area:active{
+
+.amsify-suggestags-area:active {
     border-color: black;
 }
 
-.search-button-div{
+.search-button-div {
     display: flex;
     width: 100%;
     justify-content: flex-end;
     margin-top: 2%;
 }
-.select2{
+
+.select2 {
     color: white;
     flex: 1 150px;
-    
     margin-top: 1%;
 }
-.cards-main{
+
+.cards-main {
     width: 100%;
     display: flex;
     flex-direction: column-reverse;
 }
-.card-top{
+
+.card-top {
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
     color: white;
-    
 }
 
-.card-top-date{
+.card-top-date {
     font-weight: normal;
 }
 
-.card{
-    
+.card {
     width: 100%;
     margin-top: 2%;
     box-shadow: 0 0 10px 0 rgba(177, 177, 177, 0.26);
 }
 
-.card:hover{
+.card:hover {
     box-shadow: 0 0 50px 0 rgba(94, 94, 94, 0.26);
     cursor: pointer;
 }
 
-
-.preload{
+.preload {
     position: fixed;
+    top: 800px;
     z-index: 10;
     flex: 1;
     margin: 2%;
-    margin-top: 450px;
 }
 
-.attrs{
+.attrs {
     display: flex;
     flex-direction: row;
     color: white;
@@ -167,7 +159,7 @@
     flex-wrap: wrap;
 }
 
-.db-cols{
+.db-cols {
     margin-right: 1%;
     margin-top: 1%;
 }
