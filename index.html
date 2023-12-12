@@ -240,8 +240,8 @@
     
 <script>
 
-      var SERVER_URL = 'http://localhost:5000';
-      //var SERVER_URL = 'http://tandem7.pythonanywhere.com';
+      //var SERVER_URL = 'http://localhost:5000';
+      var SERVER_URL = 'http://tandem7.pythonanywhere.com';
       var res = {}
       var res_plots_data = {}
       
@@ -281,7 +281,10 @@
         var response =  await fetch(SERVER_URL + "/get_study_design", 
         {
           headers: {
-            "Content-Type": "application/json",
+            'Accept': 'application/json',
+              'Access-Control-Allow-Origin': "*",
+              'Access-Control-Allow-Credentials': 'true',
+              "Content-Type": "application/json",
           },
           method: "POST",
         });
@@ -340,7 +343,10 @@
        
        var response =  await fetch(SERVER_URL + "/get_data_type", {
          headers: {
-           "Content-Type": "application/json",
+          'Accept': 'application/json',
+              'Access-Control-Allow-Origin': "*",
+              'Access-Control-Allow-Credentials': 'true',
+              "Content-Type": "application/json",
          },
          method: "POST",
          
@@ -571,6 +577,9 @@
             type: "POST",
             data: JSON.stringify(flt_data),
             headers: {
+              'Accept': 'application/json',
+              'Access-Control-Allow-Origin': "*",
+              'Access-Control-Allow-Credentials': 'true',
               "Content-Type": "application/json",
             },
             beforeSend: function() {
@@ -623,6 +632,9 @@
               'articles_id': res[res.length - 1]['articles_id']
             }),
             headers: {
+              'Accept': 'application/json',
+              'Access-Control-Allow-Origin': "*",
+              'Access-Control-Allow-Credentials': 'true',
               "Content-Type": "application/json",
             },
             beforeSend: function() {
